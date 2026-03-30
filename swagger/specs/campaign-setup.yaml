@@ -1,0 +1,101 @@
+openapi: 3.0.2
+x-stoplight:
+  id: wm5jlyoruv5i7
+info:
+  title: Campaign Setup
+  version: 2.4.1
+  description: Additional APIs for campaigns.
+paths:
+  /api/public/campaign/sync:
+    post:
+      summary: Campaign Sync
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - advertiser
+                - publisher
+                - startDate
+                - endDate
+              properties:
+                advertiser:
+                  type: string
+                  description: The advertiser name
+                publisher:
+                  type: string
+                  description: The publisher name
+                startDate:
+                  type: string
+                  description: The start date of the campaign eg 2024-01-20
+                endDate:
+                  type: string
+                  description: The end date of the campaign eg 2024-01-30
+                category:
+                  type: string
+                  description: The category of the campaign.
+                  enum:
+                    - baked-in
+                    - dai
+                geo:
+                  type: string
+                  default: GLOBAL
+                  description: Country
+                  enum:
+                    - GLOBAL
+                    - US
+                    - GB
+                    - CA
+                    - AU
+                    - DE
+                    - FR
+                    - MX
+                    - IE
+                    - JP
+                    - ES
+                    - IN
+                    - BR
+                    - IT
+                    - AR
+                    - KR
+                    - SA
+                    - AE
+                    - ID
+                    - EG
+                    - SG
+                promo:
+                  type: string
+                  description: The discount code
+                itunesId:
+                  type: number
+                  description: The iTunes ID of the podcast
+                externalId:
+                  type: string
+                  description: 'External ID of the campaign, required for update'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - externalId
+                properties:
+                  externalId:
+                    type: string
+                    description: The external ID of the campaign
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: a8yqldiwmjuk5

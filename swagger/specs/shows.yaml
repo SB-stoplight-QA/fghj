@@ -1,0 +1,296 @@
+openapi: 3.0.2
+x-stoplight:
+  id: hamozsvdfy7hp
+info:
+  title: Shows
+  version: 2.4.1
+  description: APIs that allow to add new show or get existing show's info
+paths:
+  '/api/public/series/episodes/{id}':
+    get:
+      summary: 'Show Info — Episodes, Advertisers, Downloads, etc'
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      parameters:
+        - in: path
+          required: true
+          name: id
+          description: ITunes ID / YouTube Channel ID / YouTube Playlist ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/shows/ShowInfoData.yaml
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: 17p4o03g552if
+  '/api/public/episode/impression-listeners/{podscribe_episode_id}':
+    get:
+      summary: Anonymized listener IDs (episode)
+      description: |
+        <!-- theme: info -->
+         > This endpoint utilizes a task system.
+         >
+         > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+         > to understand how it works.
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      parameters:
+        - in: path
+          required: true
+          name: podscribe_episode_id
+          description: The Podscribe episode ID
+          schema:
+            type: string
+        - in: query
+          name: week_lb
+          description: The lower bound of the week to get data for
+          schema:
+            type: string
+        - in: query
+          name: advertiser
+          description: The advertiser to get data for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: 8hz70sas47sch
+  '/api/public/series/impression-listeners/{podscribe_show_id}':
+    get:
+      summary: Anonymized listener IDs (Show) (Note - only prefix impressions included)
+      description: |
+        <!-- theme: info -->
+         > This endpoint utilizes a task system.
+         >
+         > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+         > to understand how it works.
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      parameters:
+        - in: path
+          required: true
+          name: podscribe_show_id
+          description: The Podscribe show ID
+          schema:
+            type: string
+        - in: query
+          name: advertiser
+          description: The advertiser to get data for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: askqpbfupmmlr
+  /api/public/campaignshow/impression-listeners:
+    get:
+      summary: Anonymized Listener IDs (Campaign) (Note - only prefix impressions included)
+      description: |
+        <!-- theme: info -->
+         > This endpoint utilizes a task system.
+         >
+         > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+         > to understand how it works.
+
+        **Note:** You can only pull Listener IDs from the last 90 days.
+
+        **At least one of the following query parameters is required:** - `id` - `external_lookup_name` - `placed_name` - `external_id`
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      parameters:
+        - in: query
+          name: id
+          description: The campaign show id to get data for
+          schema:
+            type: string
+        - in: query
+          name: external_lookup_name
+          description: The campaign show external_lookup_name to get data for
+          schema:
+            type: string
+        - in: query
+          name: placed_name
+          description: The campaign show placed_name to get data for
+          schema:
+            type: string
+        - in: query
+          name: external_id
+          description: The campaign show external_id to get data for
+          schema:
+            type: string
+        - in: query
+          name: advertiser
+          required: true
+          description: The advertiser to get data for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: 7n1kot5otww8z
+  '/api/public/series/audience-size/{podscribe_show_id}':
+    get:
+      summary: Show Audience Size by Month (Note - only prefix impressions included)
+      description: |
+        <!-- theme: info -->
+         > This endpoint utilizes a task system.
+         >
+         > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+         > to understand how it works.
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      parameters:
+        - in: path
+          required: true
+          name: podscribe_show_id
+          description: The Podscribe show ID
+          schema:
+            type: string
+        - in: query
+          name: advertiser
+          description: The advertiser to get data for
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: xzfdxauvgpc5b
+  /api/public/series:
+    post:
+      summary: Create Show by Itunes ID or YouTube URL
+      description: |
+        1. Create a new show by providing an Itunes ID or YouTube URL.
+
+        2. Example of seriesPlatformId values:
+
+        - https://www.youtube.com/channel/UCJ5v_MCY6GNUBTO8-D3XoAg - for channels
+
+        - https://www.youtube.com/playlist?list=PL5LJy9yNk3J5Kj4EJ8Z2J6QJ1Zqy2Q0Qv - for playlists
+
+        - 123456789 - for Itunes ID
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - seriesPlatformId
+              properties:
+                seriesPlatformId:
+                  type: string
+                  description: Itunes ID or YouTube URL
+                publisherLookupName:
+                  type: string
+                  description: Publisher lookup name (optional)
+      responses:
+        '200':
+          description: Show created
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - showId
+                properties:
+                  showId:
+                    type: string
+                    description: The ID of the created show
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - message
+                properties:
+                  message:
+                    type: string
+                    description: Error Message
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: nlmcxh36d7gs9

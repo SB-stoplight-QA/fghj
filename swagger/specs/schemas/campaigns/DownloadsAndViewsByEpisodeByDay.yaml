@@ -1,0 +1,20 @@
+type: object
+x-stoplight:
+  id: mjva6tbb6e5us
+description: Data by day for the episode.
+properties:
+  startDate:
+    type: string
+    description: The start date with the format like 2023-05-03.
+    x-stoplight:
+      id: h0atx8cmubccl
+  impressions:
+    type: number
+    description: The impressions for episode of current day.
+    x-stoplight:
+      id: qenx45c095yty
+  views:
+    type: number
+    description: The YouTube views for episode of current day.
+    x-stoplight:
+      id: 9yszt67sl0fpa

@@ -1,0 +1,65 @@
+{
+  "collapseTableOfContents": true,
+  "items": [
+    {
+      "type": "item",
+      "title": "Campaigns",
+      "uri": "/swagger/specs/campaigns.yaml",
+      "slug": "campaigns"
+    },
+    {
+      "type": "item",
+      "title": "Campaign Reporting",
+      "uri": "/swagger/specs/campaign-reporting.yaml",
+      "slug": "campaign-reporting"
+    },
+    {
+      "type": "item",
+      "title": "Campaign Setup",
+      "uri": "/swagger/specs/campaign-setup.yaml",
+      "slug": "campaign-setup"
+    },
+    {
+      "type": "item",
+      "title": "Integration Health",
+      "uri": "/swagger/specs/integration-health.yaml",
+      "slug": "integration-health"
+    },
+    {
+      "type": "item",
+      "title": "Utils",
+      "uri": "/swagger/specs/utils.yaml",
+      "slug": "utils"
+    },
+    {
+      "type": "item",
+      "title": "Shows",
+      "uri": "/swagger/specs/shows.yaml",
+      "slug": "shows"
+    },
+    {
+      "type": "item",
+      "title": "Transcription",
+      "uri": "/swagger/specs/transcription.yaml",
+      "slug": "transcription"
+    },
+    {
+      "type": "item",
+      "title": "Advertisers",
+      "uri": "/swagger/specs/advertisers.yaml",
+      "slug": "advertisers"
+    },
+    {
+      "type": "item",
+      "title": "Ranker",
+      "uri": "/swagger/specs/ranker.yaml",
+      "slug": "ranker"
+    },
+    {
+      "type": "item",
+      "title": "User Management",
+      "uri": "/swagger/specs/user-management.yaml",
+      "slug": "user-management"
+    }
+  ]
+}

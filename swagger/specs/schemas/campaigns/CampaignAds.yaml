@@ -1,0 +1,125 @@
+type: array
+x-stoplight:
+  id: x8u07a48picr3
+items:
+  type: object
+  properties:
+    adId:
+      type: number
+      description: The ad ID in the Podscribe platform.
+      x-stoplight:
+        id: cbz1hy9xwf0gv
+    episodeTitle:
+      type: string
+      description: The episode title.
+      x-stoplight:
+        id: yw6r6eg327czl
+    episodeId:
+      type: number
+      description: The episode ID in the Podscribe platform.
+      x-stoplight:
+        id: yv3l4qv5x3za7
+    episodeDuration:
+      type: number
+      description: The episode duration
+      x-stoplight:
+        id: j5co217tfphlx
+    showTitle:
+      type: string
+      description: The series title.
+      x-stoplight:
+        id: 4m6p95ibvyebp
+    platform:
+      type: string
+      description: The platform the ad is placed on.
+      x-stoplight:
+        id: ejnvxv8xf1b0z
+    publisher:
+      type: string
+      description: The publisher of the series.
+      x-stoplight:
+        id: 5sh2gt3t9e0eq
+    transcriptionCreatedAt:
+      type: string
+      description: The date when the episode has been downloaded and transcribed.
+      x-stoplight:
+        id: v3a19d3i5r3nu
+    audioFileUrl:
+      type: string
+      description: The URL of the audio file for the ad.
+      x-stoplight:
+        id: n7kv5f7attyu4
+    transcriptFileUrl:
+      type: string
+      description: The URL of the transcript file for the ad.
+      x-stoplight:
+        id: mnscv4srwi0ep
+    startTs:
+      type: number
+      description: The start timestamp of the ad in the episode.
+      x-stoplight:
+        id: 4qz9kj74ql2bd
+    endTs:
+      type: number
+      description: The end timestamp of the ad in the episode.
+      x-stoplight:
+        id: g6jry81sodhk0
+    episodeUrlInFeed:
+      type: string
+      description: The URL of the episode in the feed.
+      x-stoplight:
+        id: 9ffbw4etwslr4
+    publicLink:
+      type: string
+      description: The public link to the ad.
+      x-stoplight:
+        id: fursuu3wyxo63
+    placementNum:
+      type: number
+      description: The placement number of the ad.
+      x-stoplight:
+        id: mt2zz7ewx5kgi
+    placementGroupNum:
+      type: number
+      description: The placement group number of the ad.
+      x-stoplight:
+        id: vxzs3lpc96ajt
+    placementGroupInNum:
+      type: number
+      description: The placement group in number of the ad.
+      x-stoplight:
+        id: i5nfd0x8h262o
+    placementPercent:
+      type: number
+      description: The placement percent of the ad in the episode.
+      x-stoplight:
+        id: fta9vkzw6fihz
+    competitors:
+      type: array
+      items:
+        type: string
+        description: The competitors names for the ad.
+        x-stoplight:
+          id: i5u1rjwyh33va
+      x-stoplight:
+        id: zigs9g1ja9deh
+    advertisersBefore:
+      type: array
+      items:
+        type: string
+        description: The advertiser name.
+        x-stoplight:
+          id: tvxqymbe0nuu8
+      x-stoplight:
+        id: vo2nj3181kq2r
+    advertisersAfter:
+      type: array
+      items:
+        type: string
+        description: The advertiser name.
+        x-stoplight:
+          id: ru68uh33pswmz
+      x-stoplight:
+        id: h7pc6hb1pxny6
+  x-stoplight:
+    id: xhoesqew0mu3a

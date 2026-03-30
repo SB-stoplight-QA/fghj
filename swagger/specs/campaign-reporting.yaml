@@ -1,0 +1,1773 @@
+openapi: 3.0.2
+x-stoplight:
+  id: zv3mmlz0l7qpg
+info:
+  title: Campaign Reporting
+  version: 2.4.1
+  description: API endpoints for generating CSV reports with campaign performance data.
+paths:
+  '/api/public/campaign/{request_id}':
+    get:
+      summary: Single Campaign Reporting
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      parameters:
+        - in: path
+          required: true
+          name: request_id
+          description: Campaign ID or external ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  meta:
+                    $ref: ./schemas/campaigns/CampaignMeta.yaml
+                  ads:
+                    $ref: ./schemas/campaigns/CampaignAds.yaml
+                  flags:
+                    $ref: ./schemas/campaigns/CampaignFlags.yaml
+                  flagsByAdId:
+                    $ref: ./schemas/campaigns/CampaignFlagsByAdId.yaml
+                  reporting:
+                    $ref: ./schemas/campaigns/CampaignReporting.yaml
+                  performance:
+                    $ref: ./schemas/campaigns/CampaignPerformance.yaml
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: fuhveh4dky7u2
+  /api/public/impressions:
+    post:
+      summary: By Campaign & Day/Week (Recommended)
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                 | Type     | Example               | Description                                                                                              |
+        |-----------------------|----------|-----------------------|----------------------------------------------------------------------------------------------------------|
+        | Week                  | string   | 2023-12-18            | Date of the week in the format YYYY-mm-DD.                                                               |
+        | Day                   | string   | 2023-12-23            | Date of the day in the format YYYY-mm-DD.                                                                |
+        | Advertiser            | string   | demoAdvertiser        | Name of the advertiser for the media content.                                                            |
+        | Media Type            | string   | podcast               | Type of media content, such as "podcast," "podcast and youtube," "youtube," "simulcast," or "streaming." |
+        | Type                  | string   | baked-in              | Type of ad integration, either "baked-in" or "dai" (Dynamic Ad Insertion).                               |
+        | Tags                  | string   | Retail                | Optional tags associated with the campaign.                                                              |
+        | Spend                 | number   | 123                   | Amount spent on the advertisement, if applicable.                                                        |
+        | Publisher             | string   | Some publisher        | Name of the publisher or platform hosting the content.                                                   |
+        | Campaign              | string   | My Campaign           | Name of the advertising campaign.                                                                        |
+        | Show                  | string   | Some Show             | Name of the show associated with the media content.                                                      |
+        | Episode               | string   | Some Ep               | Name or identifier of the specific episode, if applicable.                                               |
+        | Publish Date          | string   | 2023-12-18            | Date when the media content was published, in the format YYYY-mm-DD.                                     |
+        | Podcast & Streaming Impressions| number   | 123          | Number of podcast & streaming impressions, if applicable.                                                |
+        | YouTube Views         | number   | 123                   | Number of views for YouTube content, if applicable.                                                      |
+        | Reach                 | number   | 123                   | Reach represents the total number of unique users who saw the ad.                                        |
+        | Visitors              | number   | 123                   | Number of visitors to a website, if applicable.                                                          |
+        | Visits                | number   | 123                   | Number of visits to a website, if applicable.                                                            |
+        | Leads                 | number   | 123                   | Number of leads generated, if applicable.                                                                |
+        | Installs              | number   | 123                   | Number of app installations, if applicable.                                                              |
+        | Signups               | number   | 123                   | Number of signups or registrations, if applicable.                                                       |
+        | Purchases             | number   | 123                   | Number of purchases made, if applicable.                                                                 |
+        | Revenue               | number   | 123                   | Revenue generated, if applicable.                                                                        |
+        | Visitors Modeled      | number   | 123                   | Modeled number of visitors based on data analysis, if applicable.                                        |
+        | Visits Modeled        | number   | 123                   | Modeled number of visits based on data analysis, if applicable.                                          |
+        | Leads Modeled         | number   | 123                   | Modeled number of leads based on data analysis, if applicable.                                           |
+        | Installs Modeled      | number   | 123                   | Modeled number of app installations based on data analysis, if applicable.                               |
+        | Signups Modeled       | number   | 123                   | Modeled number of signups based on data analysis, if applicable.                                         |
+        | Purchases Modeled     | number   | 123                   | Modeled number of purchases based on data analysis, if applicable.                                       |
+        | Revenue Modeled       | number   | 123                   | Modeled revenue based on data analysis, if applicable.                                                   |
+        | Promo codes           | number   | 123                   | Number of times promo codes associated with the ad were used, if applicable.                             |
+        | Clicks                | number   | 123                   | How many times link was clicked.                                                                         |
+        | Campaign ID           | string   | some-campaign-id      | Identifier for the advertising campaign.                                                                 |
+        | Campaign Internal ID  | string   | mycampaign            | Podscribe campaign lookup_name.                                                                          |
+        | Publisher ID          | string   | 123                   | Podscribe publisher ID.                                                                                  |
+        | Product               | string   | some-product          | The product name.                                                                                        |
+        | Initiative            | string   | some-initiative       | The initiative name.                                                                                     |
+        | Business Line         | string   | some-business-line    | The business line name.                                                                                  |
+        | Rumble Impressions    | number   | 123                   | Number of Rumble impressions, if applicable.                                                             |
+        | Spotify Video Impressions | number   | 123                   | Number of Spotify video impressions, if applicable.                                                  |
+        | Episode GUID          | string   | episode-guid          | Guid of the episode                                                                                      |
+        | Campaign Promo        | string   | SALE20                | A string value representing a promotional code associated with a campaign                                |
+        | Campaign Start Date   | string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+        | Campaign End Date     | string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+        | Campaign Expected Date| string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fields:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    List of fields to include in the output. If none specified, all are included.
+                fieldsMapping:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  description: Object to customize column headers in the CSV output.
+                  example:
+                    Day: timestamp
+                    Publish Date: episode_upload
+                formatting:
+                  type: object
+                  properties:
+                    numberFormatting:
+                      type: boolean
+                      description: 'Smart-format as currency, percentage, or comma-separated values for readability.'
+                    summary:
+                      type: boolean
+                      description: 'Include a report summary at the top of the report, featuring the Report Title, Advertiser, Publisher, and Dates'
+                    totals:
+                      type: boolean
+                      description: Total all columns at the bottom of the report. Total reach will be queried separately.
+                  description: Object to setup the formatting of CSV output.
+                  example:
+                    numberFormatting: true
+                    summary: true
+                startDate:
+                  type: string
+                  format: date
+                  description: |
+                    Start date timestamp (e.g., "2023-10-10"). Default is 3 months ago.
+                endDate:
+                  type: string
+                  format: date
+                  description: |
+                    End date timestamp (e.g., "2023-10-10"). Default is one week forward.
+                advertiser:
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                  description: |
+                    List of advertiser names. Default is all user advertisers.
+                ytSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the YouTube views of the corresponding YouTube ad. Default is true.
+                rSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the Rumble views of the corresponding Rumble ad. Default is false.
+                svSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the Spotify video views of the corresponding Spotify video ad. Default is false.
+                includeYtSpend:
+                  type: boolean
+                  description: |
+                    If false (default), spend is not calculated for:
+                    - YouTube-only campaigns
+                    - Simulcast campaigns with YouTube views only
+
+                    We cannot model YouTube performance without RSS impressions.
+                spendOnPublishDate:
+                  type: boolean
+                  default: true
+                  description: |
+                    Determines how spend is applied for episodic ad buys. <br>If enabled (default), spend is applied on the ad's publish date. <br>If disabled, spend is prorated based on impression delivery over the first 30 days of baked-in campaigns.
+                useSettingsProfiles:
+                  type: boolean
+                  default: false
+                  description: |
+                    Enables the use of settings profiles for the request. <br>When set to `true`, the request will use the settings profile associated with the selected advertiser. <br>Any settings from the profile can still be overridden by explicitly provided request parameters.
+                attributionWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at`. Default is 30.
+                attributionStreamingWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at` for streaming. Default is 14.
+                attributionSaiWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at` for SAI. Default is 14.
+                attributionModel:
+                  type: string
+                  description: |
+                    Attribution model. Default is `multi_timedecay`.
+                  enum:
+                    - first
+                    - last
+                    - multi_linear
+                    - multi_timedecay
+                excludeReferrers:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    Referrers to exclude. Default: ["email", "facebook", "tiktok", "instagram", "twitter"].
+                excludeUtmMediums:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    UTM mediums to exclude. Default: ["email", "facebook", "fb", "tiktok", "sms", "social", "klaviyo", "youtube", "instagram", "ig"].
+                excludeUtmSources:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    UTM sources to exclude. Default: ["email", "facebook", "fb", "tiktok", "twitter", "klaviyo", "youtube", "instagram", "ig"].
+                excludePriorCustomers:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude prior customers.
+                  default: false
+                excludePriorVisitors:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude prior visitors.
+                  default: false
+                showIncrementalResults:
+                  type: boolean
+                  description: |
+                    If true, incremental columns will be included in the output.
+                incrementalDisplayType:
+                  type: string
+                  description: |
+                    If true, incremental columns will be included in the output. Default is channel
+                  enum:
+                    - channel
+                    - campaign
+                timeRangeConv:
+                  type: boolean
+                  description: |
+                    If true, the results will only include conversions from impressions in this time range.
+                  default: false
+                timeGrouping:
+                  type: string
+                  description: |
+                    Group impressions by day, week, month or without grouping if "all" is passed. Default is day.
+                  enum:
+                    - all
+                    - day
+                    - week
+                    - month
+                geoGrouping:
+                  type: string
+                  description: |
+                    Group impressions by geo. Options: "country", "zip", "region", "DMA". Default is null.
+                    Note: When "geoGrouping" is used, YouTube modeling will be disabled because YouTube views cannot be attributed to a specific location.
+                  enum:
+                    - country
+                    - zip
+                    - region
+                    - DMA
+                useNonPurchasesRevenue:
+                  type: boolean
+                  description: |
+                    Include revenue from custom events where `order_value` is non-zero.
+                weekStartsOn:
+                  type: string
+                  description: |
+                    The day of the week to start the week. Defaults to the user's settings; if not set, defaults to 'Sunday'.
+                  enum:
+                    - monday
+                    - sunday
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: cwlbu8bppyuij
+  /api/public/conversions:
+    post:
+      summary: Raw Attributed Conversions
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                           | Type     | Example                                                                             | Description                                                                                                                 |
+        |---------------------------------|----------|-------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+        | Advertiser                      | string   | demoAdvertiser                                                                      |                                                                                                                             |
+        | Purchased At                    | string   | 2023-12-23 9:58 AM                                                                  | Date and time of purchase in the format YYYY-mm-DD HH:MM tt                                                                 |
+        | Action                          | string   | install                                                                             | Type of action performed. Nullable only for promo.                                                                          |
+        | Discount code                   | string   | someCode                                                                            | Discount code used.                                                                                                         |
+        | Purchase Amount                 | number   | 123                                                                                 | Amount of purchase.                                                                                                         |
+        | Weighted Purchase Amount        | number   | 123                                                                                 | Weighted value of the purchase: Conversion Weight * Purchase Amount.                                                        |
+        | Conversion Weight               | number   | 0.05                                                                                | Conversion weight (0-1) based on attribution mode (first, last, multi-linear, multi-time decay) for credit distribution within exposures. |
+        | Order number                    | string   | aaa-bbb-ccc                                                                         | Unique identifier for the order.                                                                                            |
+        | Media Type                      | string   | podcast                                                                             | Type of media where the ad was run; values include "podcast", "podcast and youtube", "youtube", "simulcast", "streaming"    |
+        | Campaign                        | string   | My campaign                                                                         | Name of the advertising campaign.                                                                                           |
+        | Tags                            | string   | Retail                                                                              | Tags associated with the ad.                                                                                                |
+        | Category                        | string   | baked-in                                                                            | Type of ad category; values include "baked-in", "dai", "promo code"                                                         |
+        | Publisher                       | string   | Some publisher                                                                      | Name of the ad publisher.                                                                                                   |
+        | Show Last Listened To           | string   | Some show                                                                           | Name of the last show listened to by the user.                                                                              |
+        | Show Last Listened To ID        | string   | show-id                                                                             | Podscribe ID of the last show listened to by the user.                                                                      |
+        | Publisher Show / Station Name   | string   | Some station                                                                        | Name of the show or station for streaming ads. Only for streaming.                                                          |
+        | Episode                         | string   | Some Ep                                                                             | Episode where the ad was run.                                                                                               |
+        | Episode ID                      | string   | episode-id                                                                          | Podscribe ID of the episode where the ad was run.                                                                           |
+        | Last Heard Ad                   | string   | 2023-12-18 9:23 AM                                                                  | Time and date of the last heard ad, in the format YYYY-mm-DD HH:MM tt                                                       |
+        | Landing URL                     | string   | https://example.com                                                                 | URL of the landing page after the ad.                                                                                       |
+        | Referer URL                     | string   | https://example.com/buy                                                             | Referrer URL of the purchase page.                                                                                          |
+        | Publisher                       | string   | Some Publisher                                                                      | Name of the publisher.                                                                                                      |
+        | New customer                    | bool     | false                                                                               | Boolean indicating if the customer is new.                                                                                  |
+        | Conversion UA                   | string   | Mozilla/5.0 (\<system-information>) \<platform> (\<platform-details>) \<extensions> | User agent string of the conversion.                                                                                        |
+        | Impression UA                   | string   | Mozilla/5.0 (\<system-information>) \<platform> (\<platform-details>) \<extensions> | User agent string at the time of ad impression.                                                                             |
+        | IP                              | string   | 123.123.123.123                                                                     | IP address of the user on their conversion.                                                                                 |
+        | Currency                        | string   | 123                                                                                 | Currency used for the transaction.                                                                                          |
+        | ISP Weight                      | number   | 2                                                                                   | The inversion of the fraction of the campaign's impressions were residential.                                               |
+        | Mobile Ad ID                    | string   | aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee                                                | Converting device's Google Advertising ID (Android) or Identifier for Advertisers. (IOS)                                    |
+        | Device/User ID                  | string   | aaa-bbb-ccc                                                                         | Unique identifier for the user's device; typically the Podscribe cookie ID.                                                 |
+        | Raw Action                      | string   | event1                                                                              | Raw action data (if input action is different than Podscribe action name). Nullable only for promo                          |
+        | Country                         | string   | us                                                                                  | Country obtained from the conversion IP address.                                                                            |
+        | DMA                             | string   | COLUMBIA-JEFFERSON CITY                                                             | DMA obtained from the conversion IP address.                                                                                |
+        | Zip                             | string   | 12345                                                                               | Zip obtained from the conversion IP address.                                                                                |
+        | Hashed Email                    | string   | <some hash code>                                                                    | Hash code sha256 or md5.                                                                                                    |
+        | Meta                            | string   | {"some": "generic data"}                                                            | Custom parameters from tag.                                                                                                 |
+        | Campaign Internal ID            | string   | mycampaign                                                                          | Podscribe campaign lookup_name.                                                                                             |
+        | Publisher ID                    | string   | 123                                                                                 | Podscribe publisher ID.                                                                                                     |
+        | Product (from Campaign)         | string   | some-product-from-campaign                                                          | The product name from campaign.                                                                                             |
+        | Initiative                      | string   | some-initiative                                                                     | The initiative name.                                                                                                        |
+        | Survey response                 | string   | Idk. Steve-o                                                                        | The Survey Response which was matched with the Podcast name by ChatGPT                                                      |
+        | Creative ID                     | string   | creative-id                                                                         | Creative ID                                                                                                                 |
+        | Product (from Event)            | string   | some-product-from-event                                                             | The product name from event.                                                                                                |
+        | Business Line                   | string   | some-business-line                                                                  | The business line name.                                                                                                     |
+        | Show iTunes ID                  | string   | 123                                                                                 | The iTunes ID of the show.                                                                                                  |
+        | Prog. Publisher                 | string   | Some publisher                                                                      | Name of the Prog. Publisher from pixel.                                                                                                  |
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fields:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    List of fields to include in the output. If none specified, all are included.
+                fieldsMapping:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  description: |
+                    Object to customize column headers in the CSV output.
+                  example:
+                    Purchased At: converted_at
+                    Discount code: promo_code
+                startDate:
+                  type: string
+                  format: date
+                  description: |
+                    Start date timestamp (e.g., "2023-10-10"). Default is 3 months ago.
+                endDate:
+                  type: string
+                  format: date
+                  description: |
+                    End date timestamp (e.g., "2023-10-10"). Default is one week forward.
+                advertiser:
+                  type: string
+                  description: |
+                    Advertiser name. This field is required.
+                withVisitors:
+                  type: boolean
+                  description: |
+                    If true, the results file will also contain visitors. Default is false.
+                attributionModel:
+                  type: string
+                  description: |
+                    Attribution model. Default is `multi_timedecay`.
+                  enum:
+                    - first
+                    - last
+                    - multi_linear
+                    - multi_timedecay
+                excludeReferrers:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    Referrers to exclude. Default: ["email", "facebook", "tiktok", "instagram", "twitter"].
+                excludeUtmMediums:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    UTM mediums to exclude. Default: ["email", "facebook", "fb", "tiktok", "sms", "social", "klaviyo", "youtube", "instagram", "ig"].
+                excludeUtmSources:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    UTM sources to exclude. Default: ["email", "facebook", "fb", "tiktok", "twitter", "klaviyo", "youtube", "instagram", "ig"].
+                excludePriorCustomers:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude prior customers.
+                  default: false
+                excludePriorVisitors:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude prior visitors.
+                  default: false
+                timeRangeConv:
+                  type: boolean
+                  description: |
+                    If true, the results will only include conversions from impressions in this time range.
+                  default: false
+                attributionWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at`. Default is 30.
+                attributionStreamingWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at` for streaming. Default is 14.
+                attributionSaiWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at` for SAI. Default is 14.
+                excludePromos:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude conversions from promo codes. Default is false.
+                events:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    List of events to include in the output. If none specified, all are included.
+              required:
+                - advertiser
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: fmyy662p83ykz
+  /api/public/incrementality:
+    post:
+      summary: Incrementality Results
+      description: ''
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - advertiser
+              properties:
+                advertiser:
+                  type: string
+                  description: List of advertiser names separate by comma.
+                aggregationLevel:
+                  type: string
+                  description: Aggregation level to use when reporting data.  Default 'channel'
+                  enum:
+                    - channel
+                    - publisher
+                    - show_campaign
+                channelType:
+                  type: string
+                  description: Comma-separated list of channel types to report. Only applicable with aggregationLevel 'channel'. Default 'all'
+                  enum:
+                    - podcast
+                    - streaming
+                    - all
+                action:
+                  type: string
+                  description: 'Comma-separated list of actions to report. By default, all actions are reported'
+                startDate:
+                  type: string
+                  description: Start date timestamp eg 2024-10-01. Default 3 months ago
+                endDate:
+                  type: string
+                  description: End date timestamp eg 2024-10-31. Default today
+                includeErrors:
+                  type: string
+                  description: Include data with errors leading to no incremetality data. Default False
+      responses:
+        '200':
+          description: An array of incrementality results.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    advertiser:
+                      type: string
+                      description: The name of the advertiser.
+                    aggregationLevel:
+                      type: string
+                      description: 'Aggregation level used, such as ''channel'', ''publisher'', or ''show_campaign''.'
+                    channelType:
+                      type: string
+                      description: 'Type of channel (e.g., ''podcast'', ''streaming'', ''all'').'
+                    action:
+                      type: string
+                      description: The action measured for incrementality.
+                    country:
+                      type: string
+                      description: Country code where the data applies.
+                      enum:
+                        - GLOBAL
+                        - US
+                        - GB
+                        - CA
+                        - AU
+                        - DE
+                        - FR
+                        - MX
+                        - IE
+                        - JP
+                        - ES
+                        - IN
+                        - BR
+                        - IT
+                        - AR
+                        - KR
+                        - SA
+                        - AE
+                        - ID
+                        - EG
+                        - SG
+                    startDate:
+                      type: string
+                      format: date
+                      description: Start date of period over which incrementality is measured.
+                    endDate:
+                      type: string
+                      format: date
+                      description: End date of period over which incrementality is measured.
+                    campaignName:
+                      type: string
+                      description: Name of the campaign associated with the incrementality data.
+                    publisher:
+                      type: string
+                      description: Publisher of the campaign.
+                    controlGroupActionCount:
+                      type: integer
+                      description: Action count in the control group.
+                    testGroupActionCount:
+                      type: integer
+                      description: Action count in the test group.
+                    controlGroupSize:
+                      type: integer
+                      description: Size of the control group.
+                    testGroupSize:
+                      type: integer
+                      description: Size of the test group.
+                    lift:
+                      type: number
+                      format: float
+                      description: Calculated lift between test and control groups.
+                    incremental:
+                      type: number
+                      format: float
+                      description: Calculated Incremental percent between test and control groups.
+                    liftConfidenceIntervalLowerBound:
+                      type: number
+                      format: float
+                      description: Lower bound of the confidence interval for lift percent.
+                    liftConfidenceIntervalUpperBound:
+                      type: number
+                      format: float
+                      description: Upper bound of the confidence interval for lift percent.
+                    incrementalConfidenceIntervalLowerBound:
+                      type: number
+                      format: float
+                      description: Lower bound of the confidence interval for incremental percent.
+                    incrementalConfidenceIntervalUpperBound:
+                      type: number
+                      format: float
+                      description: Upper bound of the confidence interval for incremental percent.
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: u8ejpta37ma2c
+  /api/public/campaigns-performance:
+    post:
+      summary: By Campaign Reporting
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                                            | Type   | Example                          | Description                                                                        |
+        |--------------------------------------------------|--------|----------------------------------|------------------------------------------------------------------------------------|
+        | Advertiser                                       | string | Coca-Cola                        | Name of the advertising company                                                    |
+        | Publisher                                        | string | Spotify                          | Name of the publishing platform                                                    |
+        | Campaign                                         | string | Summer Promo                     | Name of the advertising campaign                                                   |
+        | Podcast                                          | string | Tech Talk                        | Name of the podcast                                                                |
+        | Tags                                             | string | Tech, Sports                     | Tags associated with the campaign                                                  |
+        | Geo                                              | string | US, UK                           | Geographical location targeted by the campaign                                     |
+        | Start date                                       | string | 4/8/2024                         | Start date of the campaign                                                         |
+        | End date                                         | string | 4/15/2024                        | End date of the campaign                                                           |
+        | Expected                                         | string | 4/8/2024                              | Date when the media content was published                                                  |
+        | Category                                         | string | Baked-in                         | Category of the campaign                                                           |
+        | Unit                                             | string | Mid                              | Type of advertising unit                                                           |
+        | Expected Impressions                             | number | 250000                           | Expected number of impressions                                                     |
+        | Spend                                            | number | 5882                             | Amount spent on the campaign                                                       |
+        | CPM                                              | string | 631 $                            | Cost per mille (thousand) impressions                                              |
+        | Ads                                              | number | 12                               | Number of ads served                                                               |
+        | Status                                           | string | WRONG GEO, STALE READ            | Column indicating the status and error flags.                                      |
+        | Impressions                                      | number | 126301                           | Number of impressions                                                              |
+        | Podcast & Streaming Impressions                  | number | 115752                           | Number of podcast and streaming impressions                                                        |
+        | YouTube Views                                    | number | 10549                            | Number of YouTube views                                                            |
+        | Reach                                            | number | 112322                           | Reach of the campaign                                                              |
+        | Freq.                                            | number | 1.0                              | Frequency of the campaign                                                          |
+        | Visitors                                         | number | 112.94                           | Number of visitors reached                                                         |
+        | Visitor %                                        | number | 0.083 %                          | Percentage of visitors reached                                                     |
+        | Visits                                           | number | 588                              | Number of visits                                                                   |
+        | Visit %                                          | number | 0.000 %                          | Percentage of visits                                                               |
+        | Installs                                         | number | 0.16                             | Number of app installs                                                             |
+        | Signups                                          | number | 3.8                              | Number of signups                                                                  |
+        | Leads                                            | number | 4.2                              | Number of leads generated                                                          |
+        | Convs.                                           | number | 2.3                              | Number of conversions                                                              |
+        | Conv. %                                          | number | 0.002 %                          | Conversion rate                                                                    |
+        | Revenue                                          | number | 152                              | Revenue generated                                                                  |
+        | ROAS                                             | number | 0.02                             | Return on advertising spend                                                        |
+        | CPA                                              | number | 3076                             | Cost per acquisition                                                               |
+        | Computed CPA                                     | number | 1667                             | Computed cost per acquisition                                                      |
+        | Filtered Resolved Status                         | string |                                  | Flags reflecting the status of campaign issues, with user-defined filtering.       |
+        | Resolved Status                                  | string |                                  | Flags indicating the status of campaign issues.                                    |
+        | Prefix placed                                    | bool   | true                             | Prefix placed                                                                      |
+        | DI Pixel                                         | string | https://verifi.podscribe.com/... | Link provided to the ad server for data callback configuration.                    |
+        | Comments                                         | string | Some user comments               | Additional comments                                                                |
+        | Ad Server                                        | string | megaphone                        | Ad server used                                                                     |
+        | Downloads                                        | string | 123                              | Number of downloads                                                                |
+        | New Converted Devices                            | string | 123                              | Number of new converted devices                                                    |
+        | New Device Downloads                             | string | 123                              | Number of new device downloads                                                     |
+        | New Subscribers                                  | string | 123                              | Number of new subscribers                                                          |
+        | % of impressions to listeners with frequency 15+ | string | 28.8                             | Percentage of impressions to listeners with frequency 15+                          |
+        | % of listeners with frequency 15+                | string | 28.5                             | Percentage of listeners with frequency 15+                                         |
+        | Expected Impressions                             | number | 250000                           | Expected number of impressions                                                     |
+        | Campaign Id                                      | string | some campaign id                 | Identifier for the campaign                                                        |
+        | Synced At                                        | string | 4/3/2024, 2:47 AM                | Date and time when data was synced                                                 |
+        | Air Date                                         | string | 2024-04-08 04:08:04.799000+00:00 | The date when the advertising campaign was first aired or broadcasted.             |
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                startDate:
+                  type: string
+                  format: date
+                  description: 'Start date timestamp, default is 3 months ago.'
+                  example: '2023-10-10'
+                endDate:
+                  type: string
+                  format: date
+                  description: 'End date timestamp, default is one week forward.'
+                  example: '2023-10-10'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: euzkda2anqf3e
+  /api/public/campaign-show-impressions:
+    post:
+      summary: By Campaign & Show & Day/Week/Month
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                 | Type     | Example               | Description                                                                                              |
+        |-----------------------|----------|-----------------------|----------------------------------------------------------------------------------------------------------|
+        | Month                 | string   | 2023-12-01            | The date of the first day of the month in the format YYYY-mm-DD.                                         |
+        | Week                  | string   | 2023-12-18            | Date of the week in the format YYYY-mm-DD.                                                               |
+        | Day                   | string   | 2023-12-23            | Date of the day in the format YYYY-mm-DD.                                                                |
+        | Advertiser            | string   | demoAdvertiser        | Name of the advertiser for the media content.                                                            |
+        | Media Type            | string   | podcast               | Type of media content, such as "podcast," "podcast and youtube," "youtube," "simulcast," or "streaming." |
+        | Type                  | string   | baked-in              | Type of ad integration, either "baked-in" or "dai" (Dynamic Ad Insertion).                               |
+        | Tags                  | string   | Retail                | Optional tags associated with the campaign.                                                              |
+        | Spend                 | number   | 123                   | Amount spent on the advertisement, if applicable.                                                        |
+        | Publisher             | string   | Some publisher        | Name of the publisher or platform hosting the content.                                                   |
+        | Campaign              | string   | My Campaign           | Name of the advertising campaign.                                                                        |
+        | Show                  | string   | Some Show             | Name of the show associated with the media content.                                                      |
+        | Episode               | string   | Some Ep               | Name or identifier of the specific episode, if applicable.                                               |
+        | Publish Date          | string   | 2023-12-18            | Date when the media content was published, in the format YYYY-mm-DD.                                     |
+        | Podcast & Streaming Impressions| number   | 123          | Number of podcast & streaming impressions, if applicable.                                                |
+        | YouTube Views         | number   | 123                   | Number of views for YouTube content, if applicable.                                                      |
+        | Reach                 | number   | 123                   | Reach represents the total number of unique users who saw the ad.                                        |
+        | Visitors              | number   | 123                   | Number of visitors to a website, if applicable.                                                          |
+        | Visits                | number   | 123                   | Number of visits to a website, if applicable.                                                            |
+        | Leads                 | number   | 123                   | Number of leads generated, if applicable.                                                                |
+        | Installs              | number   | 123                   | Number of app installations, if applicable.                                                              |
+        | Signups               | number   | 123                   | Number of signups or registrations, if applicable.                                                       |
+        | Purchases             | number   | 123                   | Number of purchases made, if applicable.                                                                 |
+        | Revenue               | number   | 123                   | Revenue generated, if applicable.                                                                        |
+        | Visitors Modeled      | number   | 123                   | Modeled number of visitors based on data analysis, if applicable.                                        |
+        | Visits Modeled        | number   | 123                   | Modeled number of visits based on data analysis, if applicable.                                          |
+        | Leads Modeled         | number   | 123                   | Modeled number of leads based on data analysis, if applicable.                                           |
+        | Installs Modeled      | number   | 123                   | Modeled number of app installations based on data analysis, if applicable.                               |
+        | Signups Modeled       | number   | 123                   | Modeled number of signups based on data analysis, if applicable.                                         |
+        | Purchases Modeled     | number   | 123                   | Modeled number of purchases based on data analysis, if applicable.                                       |
+        | Revenue Modeled       | number   | 123                   | Modeled revenue based on data analysis, if applicable.                                                   |
+        | Promo codes           | number   | 123                   | Number of times promo codes associated with the ad were used, if applicable.                             |
+        | Clicks                | number   | 123                   | How many times link was clicked.                                                                         |
+        | Campaign ID           | string   | some-campaign-id      | Identifier for the advertising campaign.                                                                 |
+        | Campaign Internal ID  | string   | mycampaign            | Podscribe campaign lookup_name.                                                                          |
+        | Publisher ID          | string   | 123                   | Podscribe publisher ID.                                                                                  |
+        | Product               | string   | some-product          | The product name.                                                                                        |
+        | Initiative            | string   | some-initiative       | The initiative name.                                                                                     |
+        | Business Line         | string   | some-business-line    | The business line name.                                                                                  |
+        | Rumble Impressions    | number   | 123                   | Number of Rumble impressions, if applicable.                                                             |
+        | Spotify Video Impressions | number   | 123                   | Number of Spotify video impressions, if applicable.                                                  |
+        | Episode GUID          | string   | episode-guid          | Guid of the episode                                                                                      |
+        | Campaign Promo        | string   | SALE20                | A string value representing a promotional code associated with a campaign                                |
+        | Campaign Start Date   | string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+        | Campaign End Date     | string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+        | Campaign Expected Date| string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - advertisers
+                - timeGrouping
+              properties:
+                formatting:
+                  type: object
+                  properties:
+                    numberFormatting:
+                      type: boolean
+                      description: 'Smart-format as currency, percentage, or comma-separated values for readability.'
+                    summary:
+                      type: boolean
+                      description: 'Include a report summary at the top of the report, featuring the Report Title, Advertiser, Publisher, and Dates'
+                    totals:
+                      type: boolean
+                      description: Total all columns at the bottom of the report. Total reach will be queried separately.
+                  description: Object to setup the formatting of CSV output.
+                  example:
+                    numberFormatting: true
+                    summary: true
+                advertisers:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    A single-item array containing the advertiser's name. Please include only one advertiser in this list.
+                startDate:
+                  type: string
+                  default: null
+                  description: |
+                    Start date timestamp, e.g., 2023-10-10, default is 3 months ago.
+                endDate:
+                  type: string
+                  default: null
+                  description: |
+                    End date timestamp, e.g., 2023-10-10, default is one week forward.
+                fields:
+                  type: array
+                  items:
+                    type: string
+                  default: null
+                  description: 'List of fields to include in the output. If none specified, all are included.'
+                fieldsMapping:
+                  type: object
+                  default: null
+                  description: Parameter to customize column headers in the CSV output.
+                  example:
+                    Day: timestamp
+                    Publish Date: episode_upload
+                ytSimulcastConv:
+                  type: boolean
+                  default: true
+                  description: |
+                    If checked, the audio conversion rate for simulcast buys will be applied
+                    to the YouTube views of the corresponding YouTube ad, default true.
+                includeYtSpend:
+                  type: boolean
+                  default: false
+                  description: |
+                    If disabled (default), spend is not calculated for:
+                    - YouTube-only campaigns, and
+                    - Simulcast campaigns with YouTube views only.
+                    We cannot model YouTube performance without RSS impressions.
+                attributionWindow:
+                  type: number
+                  default: 30
+                  description: |
+                    Days between converted_at and touched_at, default 30.
+                attributionStreamingWindow:
+                  type: number
+                  default: 14
+                  description: |
+                    Days between converted_at and touched_at for streaming, default 14
+                attributionModel:
+                  type: string
+                  default: multi_timedecay
+                  description: |
+                    Attribution model, default: multi_timedecay.
+                  enum:
+                    - first
+                    - last
+                    - multi_linear
+                    - multi_timedecay
+                excludeReferrers:
+                  type: array
+                  items:
+                    type: string
+                  default:
+                    - email
+                    - facebook
+                    - tiktok
+                    - instagram
+                    - twitter
+                  description: |
+                    Referrers to exclude. <br>Default: \"email,facebook,tiktok,instagram,twitter\". <br>If you need to avoid excluding any referrers, please pass the empty array.
+                excludeUtmMediums:
+                  type: array
+                  items:
+                    type: string
+                  default:
+                    - email
+                    - facebook
+                    - fb
+                    - tiktok
+                    - sms
+                    - social
+                    - klaviyo
+                    - youtube
+                    - instagram
+                    - ig
+                  description: |
+                    UTM mediums to exclude. <br>Default: \"email,facebook,fb,tiktok,sms,social,klaviyo,youtube,instagram,ig\". <br>If you need to avoid excluding any UTM mediums, please pass the empty array.
+                excludeUtmSources:
+                  type: array
+                  items:
+                    type: string
+                  default:
+                    - email
+                    - facebook
+                    - fb
+                    - tiktok
+                    - twitter
+                    - klaviyo
+                    - youtube
+                    - instagram
+                    - ig
+                  description: |
+                    UTM sources to exclude. <br>Default: \"email,facebook,fb,tiktok,twitter,klaviyo,youtube,instagram,ig\". <br>If you need to avoid excluding any UTM sources, please pass the empty array.
+                excludePriorCustomers:
+                  type: boolean
+                  default: false
+                  description: |
+                    If checked, the results will exclude prior customers, default false.
+                excludePriorVisitors:
+                  type: boolean
+                  default: false
+                  description: |
+                    If checked, the results will exclude prior visitors, default false.
+                spendOnPublishDate:
+                  type: boolean
+                  default: true
+                  description: |
+                    Determines how spend is applied for episodic ad buys. <br>If enabled (default), spend is applied on the ad's publish date. <br>If disabled, spend is prorated based on impression delivery over the first 30 days of baked-in campaigns.
+                useSettingsProfiles:
+                  type: boolean
+                  default: false
+                  description: |
+                    Enables the use of settings profiles for the request. <br>When set to `true`, the request will use the settings profile associated with the selected advertiser. <br>Any settings from the profile can still be overridden by explicitly provided request parameters.
+                timeRangeConv:
+                  type: boolean
+                  default: false
+                  description: |
+                    If checked, the results will only include conversions from impressions in this time range, default false.
+                timeGrouping:
+                  type: string
+                  default: day
+                  description: |
+                    Group impressions by day, week, or month, default day.
+                  enum:
+                    - day
+                    - week
+                    - month
+                showIncrementalResults:
+                  type: boolean
+                  description: |
+                    If true, incremental columns will be included in the output.
+                incrementalDisplayType:
+                  type: string
+                  description: |
+                    If true, incremental columns will be included in the output. Default is channel
+                  enum:
+                    - channel
+                    - campaign
+                useNonPurchasesRevenue:
+                  type: boolean
+                  description: |
+                    Include revenue from custom events where `order_value` is non-zero.
+                weekStartsOn:
+                  type: string
+                  description: |
+                    The day of the week to start the week. Default is user settings, when not set - "sunday".
+                  enum:
+                    - monday
+                    - sunday
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: r0dvjgwlva3bu
+  /api/public/reports/creative:
+    post:
+      summary: By Creative
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                 | Type     | Example               | Description                                                                                              |
+        |-----------------------|----------|-----------------------|----------------------------------------------------------------------------------------------------------|
+        | Week                  | string   | 2023-12-18            | Date of the week in the format YYYY-mm-DD.                                                               |
+        | Day                   | string   | 2023-12-23            | Date of the day in the format YYYY-mm-DD.                                                                |
+        | Advertiser            | string   | demoAdvertiser        | Name of the advertiser for the media content.                                                            |
+        | Creative ID           | string   | 1345805               | ID of the creative.                                                                                      |
+        | Creative Name         | string   | My Creative           | Human readable name of the creative.                                                                     |
+        | Media Type            | string   | podcast               | Type of media content, such as "podcast," "podcast and youtube," "youtube," "simulcast," or "streaming." |
+        | Type                  | string   | baked-in              | Type of ad integration, either "baked-in" or "dai" (Dynamic Ad Insertion).                               |
+        | Tags                  | string   | Retail                | Optional tags associated with the campaign.                                                              |
+        | Spend                 | number   | 123                   | Amount spent on the advertisement, if applicable.                                                        |
+        | Publisher             | string   | Some publisher        | Name of the publisher or platform hosting the content.                                                   |
+        | Campaign              | string   | My Campaign           | Name of the advertising campaign.                                                                        |
+        | Show                  | string   | Some Show             | Name of the show associated with the media content.                                                      |
+        | Podcast & Streaming Impressions| number   | 123          | Number of podcast & streaming impressions, if applicable.                                                |
+        | YouTube Views         | number   | 123                   | Number of views for YouTube content, if applicable.                                                      |
+        | Reach                 | number   | 123                   | Reach represents the total number of unique users who saw the ad.                                        |
+        | Visitors              | number   | 123                   | Number of visitors to a website, if applicable.                                                          |
+        | Visits                | number   | 123                   | Number of visits to a website, if applicable.                                                            |
+        | Leads                 | number   | 123                   | Number of leads generated, if applicable.                                                                |
+        | Installs              | number   | 123                   | Number of app installations, if applicable.                                                              |
+        | Signups               | number   | 123                   | Number of signups or registrations, if applicable.                                                       |
+        | Purchases             | number   | 123                   | Number of purchases made, if applicable.                                                                 |
+        | Revenue               | number   | 123                   | Revenue generated, if applicable.                                                                        |
+        | Visitors Modeled      | number   | 123                   | Modeled number of visitors based on data analysis, if applicable.                                        |
+        | Visits Modeled        | number   | 123                   | Modeled number of visits based on data analysis, if applicable.                                          |
+        | Leads Modeled         | number   | 123                   | Modeled number of leads based on data analysis, if applicable.                                           |
+        | Installs Modeled      | number   | 123                   | Modeled number of app installations based on data analysis, if applicable.                               |
+        | Signups Modeled       | number   | 123                   | Modeled number of signups based on data analysis, if applicable.                                         |
+        | Purchases Modeled     | number   | 123                   | Modeled number of purchases based on data analysis, if applicable.                                       |
+        | Revenue Modeled       | number   | 123                   | Modeled revenue based on data analysis, if applicable.                                                   |
+        | Promo codes           | number   | 123                   | Number of times promo codes associated with the ad were used, if applicable.                             |
+        | Clicks                | number   | 123                   | How many times link was clicked.                                                                         |
+        | Campaign ID           | string   | some-campaign-id      | Identifier for the advertising campaign.                                                                 |
+        | Campaign Internal ID  | string   | mycampaign            | Podscribe campaign lookup_name.                                                                          |
+        | Publisher ID          | string   | 123                   | Podscribe publisher ID.                                                                                  |
+        | Product               | string   | some-product          | The product name.                                                                                        |
+        | Initiative            | string   | some-initiative       | The initiative name.                                                                                     |
+        | Business Line         | string   | some-business-line    | The business line name.                                                                                  |
+        | Rumble Impressions    | number   | 123                   | Number of Rumble impressions, if applicable.                                                             |
+        | Spotify Video Impressions | number   | 123                   | Number of Spotify video impressions, if applicable.                                                  |
+        | Campaign Promo        | string   | SALE20                | A string value representing a promotional code associated with a campaign                                |
+        | Campaign Start Date   | string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+        | Campaign End Date     | string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+        | Campaign Expected Date| string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                formatting:
+                  type: object
+                  properties:
+                    numberFormatting:
+                      type: boolean
+                      description: 'Smart-format as currency, percentage, or comma-separated values for readability.'
+                    summary:
+                      type: boolean
+                      description: 'Include a report summary at the top of the report, featuring the Report Title, Advertiser, Publisher, and Dates'
+                    totals:
+                      type: boolean
+                      description: Total all columns at the bottom of the report. Total reach will be queried separately.
+                  description: Object to setup the formatting of CSV output.
+                  example:
+                    numberFormatting: true
+                    summary: true
+                fields:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    List of fields to include in the output. If none specified, all are included.
+                fieldMapping:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  description: Object to customize column headers in the CSV output.
+                  example:
+                    Day: timestamp
+                    Publish Date: episode_upload
+                startDate:
+                  type: string
+                  format: date
+                  description: |
+                    Start date ISO date (e.g., "2023-10-10"). Default is 3 months ago.
+                endDate:
+                  type: string
+                  format: date
+                  description: |
+                    End date ISO date (e.g., "2023-10-10"). Default is one week forward.
+                advertiser:
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                  description: |
+                    List of advertiser names. Default is all user advertisers.
+                ytSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the YouTube views of the corresponding YouTube ad. Default is true.
+                rSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the Rumble views of the corresponding Rumble ad. Default is false.
+                svSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the Spotify video views of the corresponding Spotify video ad. Default is false.
+                includeYtSpend:
+                  type: boolean
+                  description: |
+                    If false (default), spend is not calculated for:
+                    - YouTube-only campaigns
+                    - Simulcast campaigns with YouTube views only
+
+                    We cannot model YouTube performance without RSS impressions.
+                spendOnPublishDate:
+                  type: boolean
+                  default: true
+                  description: |
+                    Determines how spend is applied for episodic ad buys. <br>If enabled (default), spend is applied on the ad's publish date. <br>If disabled, spend is prorated based on impression delivery over the first 30 days of baked-in campaigns.
+                useSettingsProfiles:
+                  type: boolean
+                  default: false
+                  description: |
+                    Enables the use of settings profiles for the request. <br>When set to `true`, the request will use the settings profile associated with the selected advertiser. <br>Any settings from the profile can still be overridden by explicitly provided request parameters.
+                attributionWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at`. Default is 30.
+                attributionStreamingWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at` for streaming. Default is 14.
+                attributionSaiWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at` for SAI. Default is 14.
+                attributionModel:
+                  type: string
+                  description: |
+                    Attribution model. Default is `multi_timedecay`.
+                  enum:
+                    - first
+                    - last
+                    - multi_linear
+                    - multi_timedecay
+                excludeReferrers:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    Referrers to exclude. Default: ["email", "facebook", "tiktok", "instagram", "twitter"].
+                excludeUtmMediums:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    UTM mediums to exclude. Default: ["email", "facebook", "fb", "tiktok", "sms", "social", "klaviyo", "youtube", "instagram", "ig"].
+                excludeUtmSources:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    UTM sources to exclude. Default: ["email", "facebook", "fb", "tiktok", "twitter", "klaviyo", "youtube", "instagram", "ig"].
+                excludePriorCustomers:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude prior customers.
+                  default: false
+                excludePriorVisitors:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude prior visitors.
+                  default: false
+                showIncrementalResults:
+                  type: boolean
+                  description: |
+                    If true, incremental columns will be included in the output.
+                incrementalDisplayType:
+                  type: string
+                  description: |
+                    If true, incremental columns will be included in the output. Default is channel
+                  enum:
+                    - channel
+                    - campaign
+                timeRangeConv:
+                  type: boolean
+                  description: |
+                    If true, the results will only include conversions from impressions in this time range.
+                  default: false
+                timeGrouping:
+                  type: string
+                  description: |
+                    Group impressions by day, week, month or without grouping if "all" is passed. Default is day.
+                  enum:
+                    - all
+                    - day
+                    - week
+                    - month
+                useNonPurchasesRevenue:
+                  type: boolean
+                  description: |
+                    Include revenue from custom events where `order_value` is non-zero.
+                weekStartsOn:
+                  type: string
+                  description: |
+                    The day of the week to start the week. Default is user settings, when not set - "sunday".
+                  enum:
+                    - monday
+                    - sunday
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: 7xij0jqywfjhu
+  /api/public/reports/by-campaign/device:
+    post:
+      summary: By Campaign & Device
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                 | Type     | Example               | Description                                                                                              |
+        |-----------------------|----------|-----------------------|----------------------------------------------------------------------------------------------------------|
+        | Week                  | string   | 2023-12-18            | Date of the week in the format YYYY-mm-DD.                                                               |
+        | Day                   | string   | 2023-12-23            | Date of the day in the format YYYY-mm-DD.                                                                |
+        | Advertiser            | string   | demoAdvertiser        | Name of the advertiser for the media content.                                                            |
+        | Device                | string   | Apple IPhone          | Name of the device.                                                                                      |
+        | Media Type            | string   | podcast               | Type of media content, such as "podcast," "podcast and youtube," "youtube," "simulcast," or "streaming." |
+        | Type                  | string   | baked-in              | Type of ad integration, either "baked-in" or "dai" (Dynamic Ad Insertion).                               |
+        | Tags                  | string   | Retail                | Optional tags associated with the campaign.                                                              |
+        | Spend                 | number   | 123                   | Amount spent on the advertisement, if applicable.                                                        |
+        | Publisher             | string   | Some publisher        | Name of the publisher or platform hosting the content.                                                   |
+        | Campaign              | string   | My Campaign           | Name of the advertising campaign.                                                                        |
+        | Show                  | string   | Some Show             | Name of the show associated with the media content.                                                      |
+        | Podcast & Streaming Impressions| number   | 123          | Number of podcast & streaming impressions, if applicable.                                                |
+        | YouTube Views         | number   | 123                   | Number of views for YouTube content, if applicable.                                                      |
+        | Reach                 | number   | 123                   | Reach represents the total number of unique users who saw the ad.                                        |
+        | Visitors              | number   | 123                   | Number of visitors to a website, if applicable.                                                          |
+        | Visits                | number   | 123                   | Number of visits to a website, if applicable.                                                            |
+        | Leads                 | number   | 123                   | Number of leads generated, if applicable.                                                                |
+        | Installs              | number   | 123                   | Number of app installations, if applicable.                                                              |
+        | Signups               | number   | 123                   | Number of signups or registrations, if applicable.                                                       |
+        | Purchases             | number   | 123                   | Number of purchases made, if applicable.                                                                 |
+        | Revenue               | number   | 123                   | Revenue generated, if applicable.                                                                        |
+        | Visitors Modeled      | number   | 123                   | Modeled number of visitors based on data analysis, if applicable.                                        |
+        | Visits Modeled        | number   | 123                   | Modeled number of visits based on data analysis, if applicable.                                          |
+        | Leads Modeled         | number   | 123                   | Modeled number of leads based on data analysis, if applicable.                                           |
+        | Installs Modeled      | number   | 123                   | Modeled number of app installations based on data analysis, if applicable.                               |
+        | Signups Modeled       | number   | 123                   | Modeled number of signups based on data analysis, if applicable.                                         |
+        | Purchases Modeled     | number   | 123                   | Modeled number of purchases based on data analysis, if applicable.                                       |
+        | Revenue Modeled       | number   | 123                   | Modeled revenue based on data analysis, if applicable.                                                   |
+        | Promo codes           | number   | 123                   | Number of times promo codes associated with the ad were used, if applicable.                             |
+        | Clicks                | number   | 123                   | How many times link was clicked.                                                                         |
+        | Campaign ID           | string   | some-campaign-id      | Identifier for the advertising campaign.                                                                 |
+        | Campaign Internal ID  | string   | mycampaign            | Podscribe campaign lookup_name.                                                                          |
+        | Publisher ID          | string   | 123                   | Podscribe publisher ID.                                                                                  |
+        | Product               | string   | some-product          | The product name.                                                                                        |
+        | Initiative            | string   | some-initiative       | The initiative name.                                                                                     |
+        | Business Line         | string   | some-business-line    | The business line name.                                                                                  |
+        | Rumble Impressions    | number   | 123                   | Number of Rumble impressions, if applicable.                                                             |
+        | Spotify Video Impressions | number   | 123                   | Number of Spotify video impressions, if applicable.                                                  |
+        | Campaign Promo        | string   | SALE20                | A string value representing a promotional code associated with a campaign                                |
+        | Campaign Start Date   | string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+        | Campaign End Date     | string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+        | Campaign Expected Date| string   | 19-03-2025            | A string value representing a promotional code associated with a campaign                                |
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                fields:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    List of fields to include in the output. If none specified, all are included.
+                fieldMapping:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  description: Object to customize column headers in the CSV output.
+                  example:
+                    Day: timestamp
+                    Publish Date: episode_upload
+                formatting:
+                  type: object
+                  properties:
+                    numberFormatting:
+                      type: boolean
+                      description: 'Smart-format as currency, percentage, or comma-separated values for readability.'
+                    summary:
+                      type: boolean
+                      description: 'Include a report summary at the top of the report, featuring the Report Title, Advertiser, Publisher, and Dates'
+                    totals:
+                      type: boolean
+                      description: Total all columns at the bottom of the report. Total reach will be queried separately.
+                  description: Object to setup the formatting of CSV output.
+                  example:
+                    numberFormatting: true
+                    summary: true
+                startDate:
+                  type: string
+                  format: date
+                  description: |
+                    Start date ISO date (e.g., "2023-10-10"). Default is 3 months ago.
+                endDate:
+                  type: string
+                  format: date
+                  description: |
+                    End date ISO date (e.g., "2023-10-10"). Default is one week forward.
+                advertiser:
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                  description: |
+                    List of advertiser names. Default is all user advertisers.
+                ytSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the YouTube views of the corresponding YouTube ad. Default is true.
+                rSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the Rumble views of the corresponding Rumble ad. Default is false.
+                svSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the Spotify video views of the corresponding Spotify video ad. Default is false.
+                includeYtSpend:
+                  type: boolean
+                  description: |
+                    If false (default), spend is not calculated for:
+                    - YouTube-only campaigns
+                    - Simulcast campaigns with YouTube views only
+
+                    We cannot model YouTube performance without RSS impressions.
+                spendOnPublishDate:
+                  type: boolean
+                  default: true
+                  description: |
+                    Determines how spend is applied for episodic ad buys. <br>If enabled (default), spend is applied on the ad's publish date. <br>If disabled, spend is prorated based on impression delivery over the first 30 days of baked-in campaigns.
+                useSettingsProfiles:
+                  type: boolean
+                  default: false
+                  description: |
+                    Enables the use of settings profiles for the request. <br>When set to `true`, the request will use the settings profile associated with the selected advertiser. <br>Any settings from the profile can still be overridden by explicitly provided request parameters.
+                attributionWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at`. Default is 30.
+                attributionStreamingWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at` for streaming. Default is 14.
+                attributionSaiWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at` for SAI. Default is 14.
+                attributionModel:
+                  type: string
+                  description: |
+                    Attribution model. Default is `multi_timedecay`.
+                  enum:
+                    - first
+                    - last
+                    - multi_linear
+                    - multi_timedecay
+                excludeReferrers:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    Referrers to exclude. Default: ["email", "facebook", "tiktok", "instagram", "twitter"].
+                excludeUtmMediums:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    UTM mediums to exclude. Default: ["email", "facebook", "fb", "tiktok", "sms", "social", "klaviyo", "youtube", "instagram", "ig"].
+                excludeUtmSources:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    UTM sources to exclude. Default: ["email", "facebook", "fb", "tiktok", "twitter", "klaviyo", "youtube", "instagram", "ig"].
+                excludePriorCustomers:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude prior customers.
+                  default: false
+                excludePriorVisitors:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude prior visitors.
+                  default: false
+                showIncrementalResults:
+                  type: boolean
+                  description: |
+                    If true, incremental columns will be included in the output.
+                incrementalDisplayType:
+                  type: string
+                  description: |
+                    If true, incremental columns will be included in the output. Default is channel
+                  enum:
+                    - channel
+                    - campaign
+                timeRangeConv:
+                  type: boolean
+                  description: |
+                    If true, the results will only include conversions from impressions in this time range.
+                  default: false
+                timeGrouping:
+                  type: string
+                  description: |
+                    Group impressions by day, week, month or without grouping if "all" is passed. Default is day.
+                  enum:
+                    - all
+                    - day
+                    - week
+                    - month
+                useNonPurchasesRevenue:
+                  type: boolean
+                  description: |
+                    Include revenue from custom events where `order_value` is non-zero.
+                weekStartsOn:
+                  type: string
+                  description: |
+                    The day of the week to start the week. Default is user settings, when not set - "sunday".
+                  enum:
+                    - monday
+                    - sunday
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: b1tb3qz0j65za
+  /api/public/reports/lag:
+    post:
+      summary: Lag Report
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                           | Type     | Example                                                                             | Description                                                                                                                 |
+        |---------------------------------|----------|-------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------|
+        | Action                          | string   | purchase                                                                            | Target action, one of: purchase/visitor/signup                                                                              |
+        | Object ID                       | string   | podcast                                                                             | ID of the object as resulted by applying the provided groupKey                                                              |
+        | Day 1...N                       | number   | 3.5                                                                                 | Which share of the total actions occurred on that day.                                                                      |
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                groupKey:
+                  type: string
+                  description: |
+                    Specifies the field to group the results by.
+                  enum:
+                    - mediaType
+                    - publisher
+                    - campaigns
+                    - series
+                    - genres
+                actions:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    List of target actions to include in the report. The most popular actions are: - purchase - visitor - signup - install - lead
+                    Other actions can be specified as well if they are sent by the advertiser.
+                    Empty list means all actions.
+                startDate:
+                  type: string
+                  format: date
+                  description: |
+                    Start date ISO date (e.g., "2023-10-10") or timestamp. Default is 3 months ago.
+                endDate:
+                  type: string
+                  format: date
+                  description: |
+                    End date ISO date (e.g., "2023-10-10") or timestamp. Default is one week forward.
+                advertiser:
+                  type: array
+                  items:
+                    type: string
+                  default: []
+                  description: |
+                    List of advertiser names. Default is all user advertisers.
+                ytSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the YouTube views of the corresponding YouTube ad. Default is true.
+                rSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the Rumble views of the corresponding Rumble ad. Default is false.
+                svSimulcastConv:
+                  type: boolean
+                  description: |
+                    If true, the audio conversion rate for simulcast buys will be applied to the Spotify video views of the corresponding Spotify video ad. Default is false.
+                includeYtSpend:
+                  type: boolean
+                  description: |
+                    If false (default), spend is not calculated for:
+                    - YouTube-only campaigns
+                    - Simulcast campaigns with YouTube views only
+                    We cannot model YouTube performance without RSS impressions.
+                spendOnPublishDate:
+                  type: boolean
+                  default: true
+                  description: |
+                    Determines how spend is applied for episodic ad buys. <br>If enabled (default), spend is applied on the ad's publish date. <br>If disabled, spend is prorated based on impression delivery over the first 30 days of baked-in campaigns.
+                useSettingsProfiles:
+                  type: boolean
+                  default: false
+                  description: |
+                    Enables the use of settings profiles for the request. <br>When set to `true`, the request will use the settings profile associated with the selected advertiser. <br>Any settings from the profile can still be overridden by explicitly provided request parameters.
+                attributionWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at`. Default is 30.
+                attributionStreamingWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at` for streaming. Default is 14.
+                attributionSaiWindow:
+                  type: number
+                  description: |
+                    Days between `converted_at` and `touched_at` for SAI. Default is 14.
+                attributionModel:
+                  type: string
+                  description: |
+                    Attribution model. Default is `multi_timedecay`.
+                  enum:
+                    - first
+                    - last
+                    - multi_linear
+                    - multi_timedecay
+                excludeReferrers:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    Referrers to exclude. Default: ["email", "facebook", "tiktok", "instagram", "twitter"].
+                excludeUtmMediums:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    UTM mediums to exclude. Default: ["email", "facebook", "fb", "tiktok", "sms", "social", "klaviyo", "youtube", "instagram", "ig"].
+                excludeUtmSources:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    UTM sources to exclude. Default: ["email", "facebook", "fb", "tiktok", "twitter", "klaviyo", "youtube", "instagram", "ig"].
+                excludePriorCustomers:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude prior customers.
+                  default: false
+                excludePriorVisitors:
+                  type: boolean
+                  description: |
+                    If true, the results will exclude prior visitors.
+                  default: false
+                showIncrementalResults:
+                  type: boolean
+                  description: |
+                    If true, incremental columns will be included in the output.
+                incrementalDisplayType:
+                  type: string
+                  description: |
+                    If true, incremental columns will be included in the output. Default is channel
+                  enum:
+                    - channel
+                    - campaign
+                timeRangeConv:
+                  type: boolean
+                  description: |
+                    If true, the results will only include conversions from impressions in this time range.
+                  default: false
+                useNonPurchasesRevenue:
+                  type: boolean
+                  description: |
+                    Include revenue from custom events where `order_value` is non-zero.
+              required:
+                - advertiser
+                - groupKey
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: 90mzzs9omsojz
+components:
+  securitySchemes:
+    BearerAuth:
+      description: Your API key provided by Podscribe
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,18 @@
+type: array
+x-stoplight:
+  id: 9vd16iugy7lqf
+items:
+  type: object
+  properties:
+    adId:
+      type: string
+      description: The ad ID in the Podscribe platform.
+      x-stoplight:
+        id: yijqv0067fa0l
+    flags:
+      type: string
+      description: The flags for the ad.
+      x-stoplight:
+        id: c2l0hxb6xak7r
+  x-stoplight:
+    id: roem7zdulj25m

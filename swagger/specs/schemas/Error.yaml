@@ -1,0 +1,9 @@
+type: object
+x-stoplight:
+  id: y8rc9s11sksjj
+properties:
+  message:
+    type: object
+    description: Nodejs Error
+    x-stoplight:
+      id: evueqoim8cvs9

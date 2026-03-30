@@ -1,0 +1,52 @@
+openapi: 3.0.2
+x-stoplight:
+  id: 0q8afmu3mx8st
+info:
+  title: Transcription
+  version: 2.4.1
+  description: Episode transcription API
+paths:
+  /api/public/episode/transcript:
+    get:
+      summary: Download an episode transcript
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      parameters:
+        - in: query
+          required: true
+          name: itunes_or_yt_id
+          description: YouTube Channel ID / YouTube Playlist ID / iTunes ID
+          schema:
+            type: string
+        - in: query
+          required: true
+          name: guid
+          description: The GUID of the episode
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/episodes/TranscriptionEpisodeData.yaml
+        '422':
+          description: Unprocessable Entity
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: mnpll65cfedky
+components:
+  securitySchemes:
+    BearerAuth:
+      description: Your API key provided by Podscribe
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

@@ -1,0 +1,284 @@
+openapi: 3.0.2
+x-stoplight:
+  id: je75tuznu9ade
+info:
+  title: Ranker
+  version: 2.4.1
+  description: 'All ranker APIs: Shows, Publishers and Advertisers.'
+paths:
+  /api/public/ranker/publishers:
+    post:
+      summary: Top Publishers Report
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                         | Type     | Example    | Description                                                     |
+        |-------------------------------|----------|------------|-----------------------------------------------------------------|
+        | Rank                          | number   | 1          | Ranking of the publisher based on performance metrics.          |
+        | Publisher                     | string   | PublisherName  | Name of the podcast publisher or network.                       |
+        | # of Show                     | number   | 100        | Total number of distinct shows under this publisher.            |
+        | Estimated Monthly Audio Reach | number   | 1231232   | Estimated number of unique listeners reached per month.         |
+        | Monthly Downloads & Views     | number   | 1232323  | Sum of monthly downloads and views across all shows.            |
+        | Average ad load               | number   | 5.32121   | Average number of ads inserted per episode for this publisher.  |
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: 1nx8tt6x94kk0
+  /api/public/ranker/series:
+    post:
+      summary: Top Series Report
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                                | Type     | Example                      | Description                                                                                              |
+        |--------------------------------------|----------|------------------------------|----------------------------------------------------------------------------------------------------------|
+        | Rank                                 | number   | 1                            | Ranking of the show in the dataset.                                                                     |
+        | Show                                 | string   | The Show     | Name of the podcast show.                                                                                |
+        | RSS Email                            | string   | foo@bar.baz       | Contact email associated with the podcast's RSS feed.                                                    |
+        | Publisher                            | string   | Publisher                    | Organization or company publishing the podcast.                                                          |
+        | Publisher Email                      | string   | foo@bar.baz           | Contact email of the publisher.                                                                          |
+        | Genre                                | string   | True Crime                   | Genre or category of the podcast.                                                                        |
+        | Content Risk                         | string   | medium                       | Content safety or risk level classification.                                                             |
+        | Estimated reach                      | number   | 8335118                    | Estimated number of individuals reached.                                                                 |
+        | Estimated downloads per episode      | number   | 1968697                    | Estimated downloads per each episode.                                                                    |
+        | Estimated downloads per month        | number   | 18310294                   | Estimated total monthly downloads across episodes.                                                       |
+        | Estimated podcast downloads per episode | number | 1902865                    | Estimated per-episode downloads from podcast platforms.                                                  |
+        | Estimated podcast downloads per month   | number | 17989350                   | Estimated monthly podcast platform downloads.                                                            |
+        | Estimated YouTube downloads per episode | number | 53123                       | Estimated per-episode views on YouTube.                                                                  |
+        | Estimated YouTube downloads per month   | number | 312542                      | Estimated monthly views from YouTube.                                                                    |
+        | Estimated Spotify downloads per episode | number | 312542                  | Spotify-specific episode views (if available).                                                           |
+        | Estimated Spotify downloads per month   | number | 312542                  | Spotify-specific monthly views (if available).                                                           |
+        | Estimated Rumble downloads per episode  | number | 312542                  | Rumble-specific episode views (if available).                                                            |
+        | Estimated Rumble downloads per month    | number | 312542                  | Rumble-specific monthly views (if available).                                                            |
+        | Number of ads                        | number   | 1493                         | Total number of ads within the dataset for this show.                                                |
+        | Ad load %                            | string   | 14%                          | Ad load percentage (amount of content dedicated to ads).                                             |
+        | Renewal rate                         | string   | 56%                          | Percentage of ad contracts that were renewed.                                                        |
+        | Host read %                          | string   | 69%                          | Percentage of ads read by the host.                                                                  |
+        | Direct response %                    | string   | 57%                          | Share of ads optimized for direct response (e.g., promo codes).                                      |
+        | Top advertisers                      | string   | Advertiser1,Advertiser2,...   | List of top advertisers associated with the show.                                                   |
+        | Male %                               | string   | 23%                          | Percentage of male listeners.                                                                        |
+        | Average age                          | number   | 32                           | Average listener age.                                                                                |
+        | Average income                       | string   | $52,755                      | Average household income of listeners.                                                               |
+        | Location                             | string   | Los Angeles, CA: 4.3%...     | Top listener locations with percentages.                                                             |
+        | Industries                           | string   | Education: 8.5%...           | Listener industries with prevalence percentages.                                                     |
+        | Occupations                          | string   | Nurses: 2.9%,Teachers:...    | Common occupations among listeners.                                                                  |
+        | Ethnicity                            | string   | White/caucasian: 82.2%...    | Listener ethnicity breakdown.                                                                        |
+        | Marital status                       | string   | Single: 60.2%...             | Breakdown of listeners by marital status.                                                            |
+        | Parental status                      | string   | Parents: 19.1%               | Percentage of listeners who are parents.                                                             |
+        | Simulcast YouTube series ID          | number   | 2517763                      | Internal identifier for the show's simulcast YouTube version.                                        |
+        | First Publish                        | string   | 2017-12-18T00:01:00.000Z     | Date of the first published episode (ISO timestamp format).                                          |
+        | Last Publish                         | string   | 2017-12-18T00:01:00.000Z     | Date of the last published episode (ISO timestamp format).                                           |
+        | Last Publish (YT)                    | string   | 2017-12-18T00:01:00.000Z     | Date of the last published YouTube episode (ISO timestamp format).                                   |
+        | RSS Episodes per week                | number   | 1                            | Average number of episodes published per week.                                                       |
+        | YT Episodes per week                 | number   | 1                            | Average number of episodes published per week.                                                       |
+        | RSS - Total # of Episodes            | number   | 100                          | Total number of episodes in the RSS feed |
+        | YT - Total # of Episodes             | number   | 100                          | Total number of episodes in the YouTube feed |
+        | Youtube URL                          | string   | https://www.youtube.com/example | URL of the show on YouTube.   |
+        | RSS Feed URL                         | string   | https://www.rss.com/example  | URL of the RSS feed   |
+        | RSS Language                         | string   | English                      | Language from RSS feed   |
+        | Country of Origin                    | string   | United States                | The country with the highest number of listeners |
+        | Simulcast match percent              | string   | 10%                          | Percentage of podcast episodes also available on YouTube or Rumble |
+        | L10 Simulcast match percent          | string   | 10%                          | Percentage of last 10 RSS episodes that match a YouTube video |
+        | Content Detected Language            | string   | English                      | Most frequent languages from podcast episodes  |
+        | RSS Location                         | string   | Los Angeles, CA: 4.3%...     | The primary country/city inferred from the RSS feed metadata where available  |
+        | Show URL                             | string   | https://app.podscribe.com/show/123 | URL of the show  |
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                platform:
+                  type: string
+                  default: podcast
+                  description: Content platform
+                  enum:
+                    - podcast
+                    - youtube
+                country:
+                  type: string
+                  default: GLOBAL
+                  description: Country
+                  enum:
+                    - GLOBAL
+                    - US
+                    - GB
+                    - CA
+                    - AU
+                    - DE
+                    - FR
+                    - MX
+                    - IE
+                    - JP
+                    - ES
+                    - IN
+                    - BR
+                    - IT
+                    - AR
+                    - KR
+                    - SA
+                    - AE
+                    - ID
+                    - EG
+                    - SG
+                sortBy:
+                  type: string
+                  description: Defines the field used to sort the results returned.
+                  default: monthlyListeners
+                  enum:
+                    - monthlyListeners
+                    - avgDownloadsPerEpisode
+                    - monthlyDownloads
+                    - countAds
+                    - adLoad
+                    - renewalRate
+                    - hostRead
+                    - directRes
+                    - directRes
+                    - firstPublishedAt
+                    - lastPublishedAt
+                    - lastYtPublishAt
+                    - l10SimulcastMatchRate
+                limit:
+                  type: integer
+                  default: 250
+                  description: Specifies the maximum number of results to return.
+                countryOfOrigin:
+                  type: array
+                  description: Filter shows by country of origin (ISO Alpha-2 codes)
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: q5yqg1majpqjz
+  /api/public/ranker/advertisers:
+    post:
+      summary: Top Advertisers Report
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                                 | Type     | Example         | Description                                                                 |
+        |---------------------------------------|----------|-----------------|-----------------------------------------------------------------------------|
+        | Rank                                  | number   | 1               | Ranking of the advertiser based on spend.                                   |
+        | Brand                                 | string   | Brand_1      | Name of the advertised brand.                                               |
+        | Industry                              | string   | Industry_1   | Industry category associated with the brand.                                |
+        | Advertiser type                       | string   | direct          | Indicates whether the advertiser is direct or via an agency.               |
+        | Estimate Spend                        | number   | 1231231        | Estimated ad spend in USD.                                                  |
+        | Change over the past 1 month %        | string   | -               | Percent change in spend over the past month.                                |
+        | Change over the past 3 months %       | string   | -               | Percent change in spend over the past 3 months.                             |
+        | Change over the past 12 months %      | string   | -               | Percent change in spend over the past 12 months.                            |
+        | Change over the past 1 month $        | number   | -               | Dollar change in spend over the past month.                                 |
+        | Change over the past 3 months $       | number   | -               | Dollar change in spend over the past 3 months.                              |
+        | Change over the past 12 months $      | number   | -               | Dollar change in spend over the past 12 months.                             |
+        | Host Read %                           | number   | 89              | Percentage of ads that were host-read.                                      |
+        | Show count                            | number   | 1999            | Number of distinct shows the advertiser appeared on.                        |
+        | Show with host reads count            | number   | 1999            | Number of shows with host-read ads.                                         |
+        | Episode count                         | number   | 30000           | Total number of episodes containing this advertiser's ads.                  |
+        | Ads count                             | number   | 45000           | Total number of ads run by this advertiser.                                 |
+        | First seen                            | string   | 3/8/2020        | Date of the first detected ad from this advertiser.                         |
+        | Last seen                             | string   | 4/28/2025       | Date of the most recent detected ad from this advertiser.                   |
+        | Top show genres                       | string   | Genre1,Genre2   | Comma-separated list of top show genres associated with the ads.            |
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: v66jr7ubcgi35

@@ -1,0 +1,43 @@
+openapi: 3.0.2
+x-stoplight:
+  id: xblrppeei9q9q
+info:
+  title: Utils
+  version: 2.4.1
+  description: Utility APIs commonly used with other API endpoints.
+paths:
+  '/api/public/file-processor/status/{id}':
+    get:
+      summary: Get file processing status
+      description: |
+        1. Retrieve the endpoint that uses the task system.
+        2. Extract the `id` field from the response.
+        3. Fetch this endpoint using the `id` field while the status is pending.
+        4. Once the data processing is complete, this endpoint will return a `status` of 'done' along with the `url` field.
+        5. Retrieve the link to access the data file.
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      parameters:
+        - in: path
+          required: true
+          name: id
+          description: Task ID from endpoint that returns task
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '404':
+          description: Task not found.
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: 6ussr269ehi3t

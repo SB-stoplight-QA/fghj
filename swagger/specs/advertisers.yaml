@@ -1,0 +1,204 @@
+openapi: 3.0.2
+x-stoplight:
+  id: 7lnb4sxr7v9gc
+info:
+  title: Advertisers
+  version: 2.4.1
+  description: API endpoints for creating advertisers and generating CSV reports by advertisers.
+paths:
+  /api/public/advertisers/estimated-spend-by-day:
+    post:
+      summary: Estimated Spend By Day Report
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                 | Type     | Example               | Description                                                                                              |
+        |-----------------------|----------|-----------------------|----------------------------------------------------------------------------------------------------------|
+        | Day                   | string   | 2023-12-23            | Date of the day in the format YYYY-mm-DD.                                                                |
+        | Advertiser            | string   | demoAdvertiser        | Name of the advertiser for the media content.                                                            |
+        | Estimated Spend       | number   | 123                   | Estimated spend
+        | Read By               | string   | Host                  | Read by, can be Host or Producer.
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - advertisers
+              properties:
+                advertisers:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    An array containing the advertiser names.
+                startDate:
+                  type: string
+                  default: null
+                  description: |
+                    Start date timestamp, e.g., 2023-10-10, default is 12 months ago.
+                endDate:
+                  type: string
+                  default: null
+                  description: |
+                    End date timestamp, e.g., 2023-10-10, default is today.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: 7sfog5znthi5m
+  /api/public/advertisers/estimated-spend-by-show-by-day:
+    post:
+      summary: Estimated Spend By Show By Day Report
+      description: |-
+        <!-- theme: info -->
+        > This endpoint utilizes a task system.
+        >
+        > Please read the description of [Get status of file processing](./utils.yaml/paths/~1api~1public~1file-processor~1status~1{id}/get)
+        > to understand how it works.
+
+        <!--
+        type: tab
+        title: Request
+        -->
+        <!--
+        type: tab
+        title: Output Schema
+        -->
+
+        Result file format:
+        | Field                 | Type     | Example               | Description                                                                                              |
+        |-----------------------|----------|-----------------------|----------------------------------------------------------------------------------------------------------|
+        | Day                   | string   | 2023-12-23            | Date of the day in the format YYYY-mm-DD.                                                                |
+        | Advertiser            | string   | demoAdvertiser        | Name of the advertiser for the media content.                                                            |
+        | Show                  | string   | The Show              | Name of the show.
+        | Estimated Spend       | number   | 123                   | Estimated spend
+        | Transcript            | string   | https://example.com   | URL to the show's episode transcript
+        | Ads                   | number   | 5                     | Count of ads for the show per day.
+        | Episodes              | number   | 10                    | Count of episodes for the show per day.
+        | Genres                | string   | Investing,Business    | Genres of the show.
+        | Read By               | string   | Host                  | Read by, can be Host or Producer.
+
+        <!-- type: tab-end -->
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - advertisers
+              properties:
+                advertisers:
+                  type: array
+                  items:
+                    type: string
+                  description: |
+                    An array containing the advertiser names.
+                startDate:
+                  type: string
+                  default: null
+                  description: |
+                    Start date timestamp, e.g., 2023-10-10, default is 12 months ago.
+                endDate:
+                  type: string
+                  default: null
+                  description: |
+                    End date timestamp, e.g., 2023-10-10, default is today.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/FileProcessingTask.yaml
+        '400':
+          description: Invalid data
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: euq2fufihfu16
+  /api/public/advertisers:
+    post:
+      summary: Create Advertiser
+      description: Create a new advertiser or return existing one if it already exists
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - advertiserName
+              properties:
+                advertiserName:
+                  type: string
+                  description: The name of the advertiser to create
+                  minLength: 1
+      responses:
+        '200':
+          description: Successfully created or retrieved advertiser
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  advertiserName:
+                    type: string
+                    description: The advertiser name
+                  lookupName:
+                    type: string
+                    description: The lookup name for the advertiser
+        '400':
+          description: Invalid request data
+        '403':
+          description: Invalid token or insufficient permissions
+        '500':
+          description: Internal server error
+      x-stoplight:
+        id: pck4uslx696xt

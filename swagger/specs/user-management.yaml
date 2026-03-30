@@ -1,0 +1,133 @@
+openapi: 3.0.2
+x-stoplight:
+  id: qdm0dtq93hdv9
+info:
+  title: User Management
+  version: 2.4.1
+  description: Podscribe users APIs
+paths:
+  /api/public/users/advertisers/invite:
+    post:
+      summary: Invite Advertiser User
+      description: Invite a new advertiser user
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - advertiserName
+                - email
+              properties:
+                advertiserName:
+                  type: string
+                  description: The name of the advertiser
+                email:
+                  type: string
+                  format: email
+                  description: The email address of the user to invite
+                tabs:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - ads
+                      - simple_campaigns
+                      - simple_overview
+                      - tag_debug
+                  description: |-
+                    The list of tabs to grant access to (optional).
+                     - If omitted, the invitee will have full access to all tabs.
+                     - If provided, the invitee will only have access to the specified tabs.
+                     - Available values:
+                       - ads — Airchecks
+                       - simple_campaigns — Simple Campaigns
+                       - simple_overview — Simple Overview
+                       - tag_debug — Tag Setup
+                teamMembers:
+                  type: array
+                  items:
+                    type: string
+                    format: email
+                    description: The email addresses of the team members associated with the advertiser (optional)
+      responses:
+        '200':
+          description: Successfully invited advertiser user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Success message
+        '400':
+          description: Invalid request data
+        '403':
+          description: Invalid token
+        '409':
+          description: User cannot be invited to advertiser
+        '500':
+          description: Internal server error
+      x-stoplight:
+        id: yyo4j2wdbacc0
+  /api/public/users/advertisers:
+    post:
+      summary: Get Advertiser Members
+      description: Get list of team members for a specific advertiser
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - advertiserName
+              properties:
+                advertiserName:
+                  type: string
+                  description: The name of the advertiser
+      responses:
+        '200':
+          description: Successfully retrieved advertiser members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                      description: Email address of the team member
+                    invited:
+                      type: string
+                      format: date-time
+                      description: Date when the user was invited
+                    status:
+                      type: string
+                      description: Current status of the user
+                      enum:
+                        - invited
+                        - active
+                        - disabled
+                        - unknown
+        '400':
+          description: Invalid request data
+        '403':
+          description: Invalid token
+        '404':
+          description: Advertiser not found
+        '500':
+          description: Internal server error
+      x-stoplight:
+        id: i2kfaky75sejc

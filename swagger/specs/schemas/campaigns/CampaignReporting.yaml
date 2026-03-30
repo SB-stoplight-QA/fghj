@@ -1,0 +1,78 @@
+type: object
+x-stoplight:
+  id: eppp6pcmff39r
+properties:
+  downloadsTotal:
+    type: number
+    description: The total number of downloads for the campaign.
+    x-stoplight:
+      id: voip6gx2xk2d7
+  youtubeViewsTotal:
+    type: number
+    description: The total number of youtube views for the campaign.
+    x-stoplight:
+      id: hxh7prp2fvmsi
+  downloadsByDay:
+    type: array
+    description: The downloads by day for the campaign.
+    items:
+      type: object
+      properties:
+        date:
+          type: string
+          description: The date with the format like 2023-05-03.
+          x-stoplight:
+            id: v11j3t5te078h
+        impressions:
+          type: number
+          description: The impressions for current day.
+          x-stoplight:
+            id: u5ihlob3vrl16
+      x-stoplight:
+        id: rh5z9orcilnju
+    x-stoplight:
+      id: 0lz1v44rc7qwq
+  youtubeViewsByDay:
+    type: array
+    description: The views by day for the campaign.
+    items:
+      type: object
+      properties:
+        date:
+          type: string
+          description: The date with the format like 2023-05-03.
+          x-stoplight:
+            id: 5h9ku1uffco19
+        views:
+          type: number
+          description: The views for current day.
+          x-stoplight:
+            id: 65vteokpb3feg
+      x-stoplight:
+        id: y56qikohzl0ce
+    x-stoplight:
+      id: mqvpdsoydsouh
+  downloadsAndViewsByEpisodeByDay:
+    type: object
+    description: Object with keys as episode ids and values as list of data by day for the episode.
+    additionalProperties:
+      type: array
+      description: List of data by day for the episode.
+      items:
+        $ref: ./DownloadsAndViewsByEpisodeByDay.yaml
+        x-stoplight:
+          id: kvqnnfxbz7w1a
+      x-stoplight:
+        id: mz8ebmxryjsfd
+    x-stoplight:
+      id: jzlqywf4hu0ab
+  reach:
+    type: number
+    description: The reach for the campaign.
+    x-stoplight:
+      id: l006g4vl2hbey
+  frequency:
+    type: number
+    description: The downloads frequency for the campaign.
+    x-stoplight:
+      id: nj4jwfgkld9qs

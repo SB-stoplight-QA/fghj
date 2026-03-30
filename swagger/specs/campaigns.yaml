@@ -1,0 +1,396 @@
+openapi: 3.0.2
+x-stoplight:
+  id: 558wsorki9qr2
+info:
+  title: Campaigns
+  version: 2.4.1
+  description: CRUD endpoints for managing campaigns.
+paths:
+  /api/public/campaign:
+    post:
+      summary: Create Campaign
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - name
+                - publisher
+                - advertiser
+                - type
+                - flights
+              properties:
+                name:
+                  type: string
+                  description: Campaign name
+                publisher:
+                  type: string
+                  description: Publisher name
+                advertiser:
+                  type: string
+                  description: Advertiser name
+                type:
+                  type: string
+                  description: Campaign type
+                  enum:
+                    - Baked-in
+                    - DAI
+                flights:
+                  type: array
+                  description: The start date of the campaign eg 2024-01-20
+                  items:
+                    type: object
+                    properties:
+                      startDate:
+                        type: string
+                        format: date-time
+                        description: start of the campaign in ISO format for DAI campaigns
+                      endDate:
+                        type: string
+                        format: date-time
+                        description: end of the campaign in ISO format for DAI campaigns
+                      expectedDate:
+                        type: string
+                        format: date-time
+                        description: expected date in ISO format for Baked-in campaings
+                      totalCost:
+                        type: number
+                        description: rate of the campaign
+                      cpm:
+                        type: number
+                        description: cpm rate of the campaign
+                      currency:
+                        type: string
+                        description: 'Currency code (USD, EUR, GBP). Exchange rate is calculated automatically on the backend.'
+                        enum:
+                          - USD
+                          - EUR
+                          - GBP
+                      expectedImpressions:
+                        type: number
+                        description: expected impressions of the campaign
+                externalId:
+                  type: string
+                  description: External ID of the campaign
+                itunesOrYtId:
+                  type: string
+                  description: ITunes ID / YouTube Channel ID / YouTube Playlist ID
+                geo:
+                  type: string
+                  default: GLOBAL
+                  description: Country
+                  enum:
+                    - GLOBAL
+                    - US
+                    - GB
+                    - CA
+                    - AU
+                    - DE
+                    - FR
+                    - MX
+                    - IE
+                    - JP
+                    - ES
+                    - IN
+                    - BR
+                    - IT
+                    - AR
+                    - KR
+                    - SA
+                    - AE
+                    - ID
+                    - EG
+                    - SG
+                expectedUnits:
+                  type: array
+                  description: Expected units of the campaign
+                  items:
+                    type: object
+                    required:
+                      - position
+                      - length
+                    properties:
+                      position:
+                        type: string
+                        description: Ad position
+                        enum:
+                          - pre
+                          - mid
+                          - post
+                          - feed drop
+                      length:
+                        type: number
+                        description: Ad length in seconds
+                promo:
+                  type: string
+                  description: The discount code
+                expectedLandingUrl:
+                  type: string
+                  description: Expected landing URL of the campaign
+                product:
+                  type: string
+                  description: Product metadata
+                initiative:
+                  type: string
+                  description: Initiative metadata
+                expectedTalkingPoints:
+                  type: array
+                  description: Expected talking points
+                  items:
+                    type: string
+                disallowedTalkingPoints:
+                  type: array
+                  description: Disallowed talking points
+                  items:
+                    type: string
+                mediaType:
+                  type: string
+                  description: Media type of the campaign
+                  default: podcast
+                  enum:
+                    - podcast
+                    - youtube
+                    - simulcast
+                    - streaming
+                    - sai
+                    - ott_ctv
+                    - display
+                    - video
+                    - twitter
+                    - twitch
+                    - tiktok
+                    - instagram
+                tags:
+                  type: array
+                  description: Tags
+                  items:
+                    type: string
+                scriptUrl:
+                  type: string
+                  description: Script URL of the campaign
+                teamMembers:
+                  type: array
+                  description: Team members metadata
+                  items:
+                    type: string
+                creativeIds:
+                  type: array
+                  description: creative IDs metadata
+                  items:
+                    type: string
+                billToPublisher:
+                  type: boolean
+                  description: whether to bill publisher
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                  - id
+                properties:
+                  id:
+                    type: string
+                    description: ID of the campaign
+                  externalId:
+                    type: string
+                    description: External ID of the campaign
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: 36l7s18ea2s2a
+  '/api/public/campaign/{request_id}':
+    put:
+      summary: Update Campaign
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      parameters:
+        - in: path
+          required: true
+          name: request_id
+          description: Campaign ID
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: Campaign type
+                  enum:
+                    - Baked-in
+                    - DAI
+                startDate:
+                  type: string
+                  format: date-time
+                  description: start of the campaign in ISO format for DAI campaigns
+                endDate:
+                  type: string
+                  format: date-time
+                  description: end of the campaign in ISO format for DAI campaigns
+                expectedDate:
+                  type: string
+                  format: date-time
+                  description: expected date in ISO format for Baked-in campaings
+                totalCost:
+                  type: number
+                  description: rate of the campaign
+                cpm:
+                  type: number
+                  description: cpm rate of the campaign
+                expectedImpressions:
+                  type: number
+                  description: expected impressions of the campaign
+                itunesOrYtId:
+                  type: string
+                  description: ITunes ID / YouTube Channel ID / YouTube Playlist ID
+                geo:
+                  type: string
+                  description: Country
+                  enum:
+                    - GLOBAL
+                    - US
+                    - GB
+                    - CA
+                    - AU
+                    - DE
+                    - FR
+                    - MX
+                    - IE
+                    - JP
+                    - ES
+                    - IN
+                    - BR
+                    - IT
+                    - AR
+                    - KR
+                    - SA
+                    - AE
+                    - ID
+                    - EG
+                    - SG
+                expectedUnits:
+                  type: array
+                  description: Expected units of the campaign
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                        - position
+                        - length
+                      properties:
+                        position:
+                          type: string
+                          description: Ad position
+                          enum:
+                            - pre
+                            - mid
+                            - post
+                            - feed drop
+                        length:
+                          type: number
+                          description: Ad length in seconds
+                promo:
+                  type: string
+                  description: The discount code
+                expectedLandingUrl:
+                  type: string
+                  description: Expected landing URL of the campaign
+                product:
+                  type: string
+                  description: Product metadata
+                initiative:
+                  type: string
+                  description: Initiative metadata
+                mediaType:
+                  type: string
+                  description: Media type of the campaign
+                  enum:
+                    - podcast
+                    - youtube
+                    - simulcast
+                    - streaming
+                    - sai
+                    - ott_ctv
+                    - display
+                    - video
+                    - twitter
+                    - twitch
+                    - tiktok
+                    - instagram
+                tags:
+                  type: array
+                  description: Tags
+                  items:
+                    type: string
+                teamMembers:
+                  type: array
+                  description: Team members metadata
+                  items:
+                    type: string
+                creativeIds:
+                  type: array
+                  description: creative IDs metadata
+                  items:
+                    type: string
+      responses:
+        '200':
+          description: OK
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: vv8sa3pzyc1k9
+    delete:
+      summary: Delete Campaign
+      security:
+        - BearerAuth: []
+      servers:
+        - url: 'https://backend.podscribe.ai/'
+      parameters:
+        - in: path
+          required: true
+          name: request_id
+          description: Campaign ID
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Delete success.
+        '500':
+          description: Unexpected error.
+          content:
+            application/json:
+              schema:
+                $ref: ./schemas/Error.yaml
+      x-stoplight:
+        id: dxxv8j97msv6z
+components:
+  securitySchemes:
+    BearerAuth:
+      description: Your API key provided by Podscribe
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

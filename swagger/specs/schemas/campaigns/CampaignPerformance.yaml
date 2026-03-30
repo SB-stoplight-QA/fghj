@@ -1,0 +1,124 @@
+type: object
+x-stoplight:
+  id: 6d7l5e6feewyx
+properties:
+  visitors:
+    type: number
+    description: The number of visitors for the campaign.
+    x-stoplight:
+      id: y2txcl6x0q6w6
+  visits:
+    type: number
+    description: The number of visits for the campaign.
+    x-stoplight:
+      id: dypy33x67l6xj
+  signups:
+    type: number
+    description: The number of signups for the campaign.
+    x-stoplight:
+      id: wpeq5jleeiazg
+  conversions:
+    type: number
+    description: The conversions for the campaign.
+    x-stoplight:
+      id: ehr05ziz87ekh
+  revenue:
+    type: number
+    description: The revenue for the campaign.
+    x-stoplight:
+      id: xul51um2xvcie
+  visitorsByDate:
+    type: array
+    items:
+      type: object
+      properties:
+        date:
+          type: string
+          description: The date by which the visitors were counted.
+          x-stoplight:
+            id: 9px72g95uvugb
+        count:
+          type: number
+          description: The number of visitors.
+          x-stoplight:
+            id: 9h4vmh5wrr35b
+      x-stoplight:
+        id: il3enu87ze2db
+    x-stoplight:
+      id: shz9p3wuckee3
+  visitsByDate:
+    type: array
+    items:
+      type: object
+      properties:
+        date:
+          type: string
+          description: The date by which the visits were counted.
+          x-stoplight:
+            id: 3xrhdmb1guf05
+        count:
+          type: number
+          description: The number of visits.
+          x-stoplight:
+            id: lhtjanuzojrkg
+      x-stoplight:
+        id: xwk7gg36yygh1
+    x-stoplight:
+      id: rq828ddnfom69
+  signupsByDate:
+    type: array
+    items:
+      type: object
+      properties:
+        date:
+          type: string
+          description: The date by which the signups were counted.
+          x-stoplight:
+            id: 9lnwa9w6ug08u
+        count:
+          type: number
+          description: The number of signups.
+          x-stoplight:
+            id: xkykajaf6dd9p
+      x-stoplight:
+        id: sqtkujw0mcbp0
+    x-stoplight:
+      id: nabjf0l7cy2r8
+  conversionsByDate:
+    type: array
+    items:
+      type: object
+      properties:
+        date:
+          type: string
+          description: The date by which the conversions were counted.
+          x-stoplight:
+            id: xe73rhqq5nijk
+        count:
+          type: number
+          description: The number of conversions.
+          x-stoplight:
+            id: 5un6n6ueqrhdl
+      x-stoplight:
+        id: f4dr31f7fzn1q
+    x-stoplight:
+      id: j7o9xtacyicem
+  revenueByDate:
+    type: array
+    items:
+      type: object
+      properties:
+        date:
+          type: string
+          description: The date by which the revenue was counted.
+          x-stoplight:
+            id: m6e4u7s7cq2fj
+        count:
+          type: number
+          description: The revenue.
+          x-stoplight:
+            id: v95n85ouzlnoe
+      x-stoplight:
+        id: 3qa0o9zpbq569
+    x-stoplight:
+      id: 5n1kuhoapsr6r

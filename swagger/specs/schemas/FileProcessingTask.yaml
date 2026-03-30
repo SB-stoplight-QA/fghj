@@ -1,0 +1,16 @@
+type: object
+x-stoplight:
+  id: oo5pcl627ehno
+properties:
+  id:
+    type: string
+    x-stoplight:
+      id: j42yfm5iq503h
+  status:
+    type: string
+    x-stoplight:
+      id: otmv8qo5upxn9
+  url:
+    type: string
+    x-stoplight:
+      id: 444ysgnzf7m5c

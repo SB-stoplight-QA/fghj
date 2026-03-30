@@ -1,0 +1,87 @@
+type: object
+x-stoplight:
+  id: i4890p7cty7dt
+properties:
+  id:
+    type: integer
+    description: The unique identifier for an episode in the Podscribe platform.
+    x-stoplight:
+      id: qzsryt38t87wi
+  title:
+    type: string
+    description: The title of an episode of a podcast or other audio content.
+    x-stoplight:
+      id: 9bfm4id7rcqnq
+  guid:
+    type: string
+    description: The globally unique identifier (GUID) for an episode in a podcast or YouTube channel
+    x-stoplight:
+      id: 7mej4c63bbhw4
+  description:
+    type: string
+    description: The description of an episode of a podcast or other audio content.
+    x-stoplight:
+      id: 16q81188vysda
+  duration:
+    type: integer
+    description: The duration of an episode of a podcast or other audio content.
+    x-stoplight:
+      id: vw8966696m6sa
+  url:
+    type: string
+    description: The URL of the media file for an episode of a podcast or other audio content.
+    x-stoplight:
+      id: kdb2mwhpufu16
+  seriesId:
+    type: string
+    description: The unique identifier for a series in the Podscribe platform.
+    x-stoplight:
+      id: 4snbqvayvd2w5
+  artist:
+    type: string
+    description: The artist of an episode of a podcast or other audio content.
+    x-stoplight:
+      id: m2a6xdb9a07qo
+  seriesLogoUrl:
+    type: string
+    description: The URL of the logo for a series of a podcast or other audio content.
+    x-stoplight:
+      id: d0l93pnib8mh7
+  seriesRssUrl:
+    type: string
+    description: The RSS URL of a series of a podcast or other audio content.
+    x-stoplight:
+      id: 7r2kot53pjdzh
+  seriesTitle:
+    type: string
+    description: The title of a series of a podcast or other audio content.
+    x-stoplight:
+      id: jv7q7znyp1ba3
+  seriesItunesId:
+    type: string
+    description: The itunes id of a series of a podcast.
+    x-stoplight:
+      id: t3qho7cwy8r8x
+  categories:
+    type: string
+    description: Comma seperated list of categories podcast belongs to.
+    x-stoplight:
+      id: 4osmwdrvknkqf
+  transcription:
+    type: object
+    properties:
+      status:
+        type: string
+        description: 'Transcription status of Done, Running, Failed, NotStarted'
+        x-stoplight:
+          id: zk4gw6eenmqnh
+      text:
+        type: array
+        items:
+          type: string
+          x-stoplight:
+            id: f5zry7nbm07mx
+        x-stoplight:
+          id: 05ndprf9iw867
+    x-stoplight:
+      id: xa7fuewtgpoup

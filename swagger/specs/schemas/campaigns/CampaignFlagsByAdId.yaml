@@ -1,0 +1,12 @@
+type: object
+x-stoplight:
+  id: 6jgg4gz3v77n9
+additionalProperties:
+  type: array
+  items:
+    type: string
+    description: The flags for the ad.
+    x-stoplight:
+      id: k98a2as7pzlj0
+  x-stoplight:
+    id: pcucn94bbarog

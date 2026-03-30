@@ -1,0 +1,131 @@
+type: object
+x-stoplight:
+  id: mtbqrff68m8hd
+properties:
+  externalId:
+    type: string
+    description: The external id of the campaign.
+    x-stoplight:
+      id: dpr29axza5ryo
+  requestId:
+    type: string
+    description: The request id of the campaign.
+    x-stoplight:
+      id: us9iayykl9tmd
+  endDate:
+    type: number
+    description: The end date of the campaign.
+    x-stoplight:
+      id: 2gdhc72f7vtn9
+  startDate:
+    type: number
+    description: The start date of the campaign.
+    x-stoplight:
+      id: sdupv1mq4vp45
+  expectedDate:
+    type: number
+    description: The expected date of the campaign.
+    x-stoplight:
+      id: mi9n5sykdy41i
+  geo:
+    type: string
+    description: The geo of audience for the campaign.
+    x-stoplight:
+      id: qk3iko0evopd8
+  expectedLengths:
+    type: array
+    items:
+      type: string
+      description: The expected lengths of the ads in the campaign in seconds.
+      x-stoplight:
+        id: pvhd03rc71g5l
+    x-stoplight:
+      id: xx69xjfht13m6
+  promo:
+    type: string
+    description: The discount code for the campaign.
+    x-stoplight:
+      id: h9qbc9594nj7c
+  category:
+    type: string
+    description: The category of the campaign.
+    x-stoplight:
+      id: kw9fvuqtpyhfh
+  agency:
+    type: string
+    description: The agency name
+    x-stoplight:
+      id: xtiqagbfphaoc
+  rate:
+    type: number
+    description: The rate in USD for the campaign.
+    x-stoplight:
+      id: x2o7nbwv8k1xh
+  currency:
+    type: string
+    description: 'Currency code (USD, EUR, GBP)'
+    enum:
+      - USD
+      - EUR
+      - GBP
+    x-stoplight:
+      id: 3zjsdsr7jbpkk
+  currencyExchangeRate:
+    type: number
+    description: Exchange rate from currency to USD (calculated automatically on the backend)
+    x-stoplight:
+      id: 3vqloxlqcujyz
+  talkingPoints:
+    type: array
+    items:
+      type: string
+      description: The talking points for the campaign.
+      x-stoplight:
+        id: 4bh9th7o8ufwc
+    x-stoplight:
+      id: o04tledqmuio8
+  expectedImpressions:
+    type: number
+    description: The expected impressions for the campaign.
+    x-stoplight:
+      id: z047rqvdc7ene
+  publisher:
+    type: string
+    description: The series publisher.
+    x-stoplight:
+      id: g301wi26qr2ns
+  advertiser:
+    type: string
+    description: The advertiser name.
+    x-stoplight:
+      id: ffgbl0ish8pm1
+  placementName:
+    type: string
+    description: The placement name for the campaign.
+    x-stoplight:
+      id: 5cwenepkaqqeq
+  prefixPlacedAt:
+    type: string
+    description: The date and time the prefix was placed.
+    x-stoplight:
+      id: nzp6cp7g4orx0
+  advertiserLookupName:
+    type: string
+    description: The advertiser lookup name.
+    x-stoplight:
+      id: aqz8gxfsy55dr
+  seriesId:
+    type: number
+    description: The series ID in the Podscribe platform.
+    x-stoplight:
+      id: kuysw4gsfok6x
+  itunesId:
+    type: string
+    description: Itunes Id
+    x-stoplight:
+      id: 5nnebircrztb5
+  youtubeSeriesId:
+    type: number
+    description: The youtube series ID in the Podscribe platform.
+    x-stoplight:
+      id: aojmdb7jc2m9q

@@ -1,0 +1,332 @@
+type: object
+x-stoplight:
+  id: yscagoj5h16wg
+properties:
+  podscribeSeriesId:
+    type: number
+    description: The unique identifier for a show in the Podscribe platform.
+    x-stoplight:
+      id: sf2obkaemeuu7
+  title:
+    type: string
+    description: The title of a series of a podcast or other audio content.
+    x-stoplight:
+      id: hn6vcyd29db6q
+  platform:
+    type: string
+    x-stoplight:
+      id: 4cry9fa16363o
+  monthlyListeners:
+    type: number
+    description: The estimated number of listeners each month who download at least one episode of the podcast (does not include YouTube viewers).
+    x-stoplight:
+      id: m8xmfoi21sksm
+  monthlyDownloads:
+    type: number
+    description: The total estimated number of downloads the show receives across all episodes each month.
+    x-stoplight:
+      id: 9mtjk5xv4l2gk
+  avgDownloadsPerEpisode:
+    type: number
+    description: The average estimated number of downloads episodes receive within the first 60 days from publish date. Useful for estimating delivery for episodic buys.
+    x-stoplight:
+      id: jprs56uxmfms4
+  ytAvgDownloadsPerEpisode:
+    type: number
+    description: The average estimated number of views episodes receive within the first 60 days from publish date (includes both podcast and YouTube). Useful for estimating delivery for episodic buys.
+    x-stoplight:
+      id: rx67a9eh7j83n
+  ytMonthlyDownloads:
+    type: number
+    description: The total estimated number of views the show receives across all episodes each month.
+    x-stoplight:
+      id: ocjbtnjtzbj9i
+  spotifyAvgDownloadsPerEpisode:
+    type: number
+    description: The average estimated number of Spotify downloads episodes receive within the first 60 days from publish date. Useful for estimating delivery for episodic buys.
+    x-stoplight:
+      id: p80pqnk32laxl
+  spotifyMonthlyDownloads:
+    type: number
+    description: The total estimated number of Spotify downloads the show receives across all episodes each month.
+    x-stoplight:
+      id: ow11erggjtz1d
+  rumbleAvgDownloadsPerEpisode:
+    type: number
+    description: The average estimated number of Rumble downloads episodes receive within the first 60 days from publish date. Useful for estimating delivery for episodic buys.
+    x-stoplight:
+      id: 6osrh2u4awv8o
+  rumbleMonthlyDownloads:
+    type: number
+    description: The total estimated number of Rumble downloads the show receives across all episodes each month.
+    x-stoplight:
+      id: izkig0d4vyufx
+  podcastDownloads:
+    type: number
+    description: The total estimated number of podcast downloads the show receives across all episodes each month.
+    x-stoplight:
+      id: hpp5z8ieu7qp9
+  podcastAvgDownloadsPerEpisode:
+    type: number
+    description: The average estimated number of podcast downloads episodes receive within the first 60 days from publish date. Useful for estimating delivery for episodic buys.
+    x-stoplight:
+      id: 9vh2trur1p09k
+  directRes:
+    type: number
+    description: 'The percentage of ads found in the last 6 months that are direct response, i.e. not branding ads. We determine an ad to be "direct response" if it has a clear measurable action, such as visiting a URL, downloading an app, etc., from which the advertiser is most likely determining campaign success.'
+    x-stoplight:
+      id: crtd5addle74r
+  hostRead:
+    type: number
+    description: The percentage of the ads read by the host.
+    x-stoplight:
+      id: ntx1yjb64q0el
+  countAds:
+    type: number
+    description: The total number of ads in Podscribe across all episodes of a show.
+    x-stoplight:
+      id: oudanwj8owv6p
+  topAdvertisers:
+    type: array
+    items:
+      type: string
+      x-stoplight:
+        id: d366pxb308q0b
+    x-stoplight:
+      id: 21jrfb6hd0y6s
+  renewalRate:
+    type: number
+    description: The percentage of all ads on this show that have a subsequent ad in an episode published in the following 2 months. This is a proxy to indicate whether an advertiser buys again on this show. Episodes in the most recent 2 months are ignored when calculating this rate.
+    x-stoplight:
+      id: hz5zk811catum
+  adLoad:
+    type: number
+    x-stoplight:
+      id: v2dpwgb11izef
+  adLoadYT:
+    type: number
+    x-stoplight:
+      id: ra1g8idbk399k
+  isPodscribePrefixPlaced:
+    type: boolean
+    description: Whether the Podscribe prefix has been placed on the show.
+    x-stoplight:
+      id: kffvr0sahvym7
+  contentRisk:
+    type: object
+    properties:
+      seriesId:
+        type: number
+        description: The unique identifier for a show in the Podscribe platform.
+        x-stoplight:
+          id: yzc7w7mdiw55r
+      overallScore:
+        type: string
+        enum:
+          - minimal
+          - low
+          - medium
+          - high
+          - floor
+        description: The overall content risk score.
+        x-stoplight:
+          id: rety6mrt03mxi
+      scoreByCategory:
+        type: object
+        additionalProperties:
+          type: string
+          x-stoplight:
+            id: dfbj4cuw39sel
+        description: A breakdown of the content risk scores by category.
+        x-stoplight:
+          id: clbz2bibfq589
+    x-stoplight:
+      id: j2fgw6nltn091
+  episodes:
+    type: array
+    items:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of an episode of a podcast or other audio content.
+          x-stoplight:
+            id: 5bt3njlbmlr56
+        podscribeEpisodeId:
+          type: number
+          description: The unique identifier for an episode in the Podscribe platform.
+          x-stoplight:
+            id: b8v8zpaan83c9
+        description:
+          type: string
+          description: The description of an episode of a podcast or other audio content.
+          x-stoplight:
+            id: fug63jmweavbk
+        downloads:
+          type: number
+          description: The number of total downloads of an episode. audio content.
+          x-stoplight:
+            id: m5akj7t82q3m1
+        downloadsAt30Days:
+          type: number
+          description: The number of total downloads of an episode for first 30 days after publishing.
+          x-stoplight:
+            id: aimgmc9z658du
+        downloadsAt7Days:
+          type: number
+          description: The number of total downloads of an episode for first 7 days after publishing.
+          x-stoplight:
+            id: f6srw4frgh9wm
+        podcastDownloads:
+          type: number
+          description: The number of downloads of an episode for podcast.
+          x-stoplight:
+            id: p94jujwix1742
+        podcastDownloadsAt30Days:
+          type: number
+          description: The number of downloads of an episode for first 30 days after publishing.
+          x-stoplight:
+            id: 7gx35n4uv2zsc
+        podcastDownloadsAt7Days:
+          type: number
+          description: The number of downloads of an episode for first 7 days after publishing.
+          x-stoplight:
+            id: vchlh4tioull3
+        youtubeDownloads:
+          type: number
+          description: The number of Youtube downloads of an episode for YouTube.
+          x-stoplight:
+            id: cpvw7n9tz8ozx
+        youtubeDownloadsAt30Days:
+          type: number
+          description: The number of Youtube downloads of an episode for first 30 days after publishing.
+          x-stoplight:
+            id: mih2nsyyak4kr
+        youtubeDownloadsAt7Days:
+          type: number
+          description: The number of Youtube downloads of an episode for first 7 days after publishing.
+          x-stoplight:
+            id: xo7574wa6um05
+        spotifyDownloads:
+          type: number
+          description: The number of Spotify downloads of an episode for Spotify.
+          x-stoplight:
+            id: w3akxoseichms
+        spotifyDownloadsAt30Days:
+          type: number
+          description: The number of Spotify downloads of an episode for first 30 days after publishing.
+          x-stoplight:
+            id: ytcnb10awioab
+        spotifyDownloadsAt7Days:
+          type: number
+          description: The number of Spotify downloads of an episode for first 7 days after publishing.
+          x-stoplight:
+            id: zk8olzqjuo5iy
+        rumbleDownloads:
+          type: number
+          description: The number of Rumble downloads of an episode for Rumble.
+          x-stoplight:
+            id: 2xi44l079vg94
+        rumbleDownloadsAt30Days:
+          type: number
+          description: The number of Rumble downloads of an episode for first 30 days after publishing.
+          x-stoplight:
+            id: kd2n0h0k26vsr
+        rumbleDownloadsAt7Days:
+          type: number
+          description: The number of Rumble downloads of an episode for first 7 days after publishing.
+          x-stoplight:
+            id: b4ehzrxedityh
+        duration:
+          type: number
+          description: The duration of an episode of a podcast or other audio content.
+          x-stoplight:
+            id: fa6czfrsx5msg
+        uploadedAt:
+          type: string
+          description: The date of an episode of a podcast or other audio content uploaded.
+          x-stoplight:
+            id: d18mnjl19jh6b
+        url:
+          type: string
+          description: The URL of the media file for an episode of a podcast or other audio content.
+          x-stoplight:
+            id: eloqh4zawlpb6
+        guid:
+          type: string
+          description: YouTube Video id or guid.
+          x-stoplight:
+            id: a6bi8yewf4i5r
+        adLoad:
+          type: number
+          description: The percentage of total time of an episode that is ads.
+          x-stoplight:
+            id: pjtfy02rqbjon
+        ads:
+          type: array
+          items:
+            type: object
+            properties:
+              adId:
+                type: number
+                description: The unique identifier for an ad in the Podscribe platform.
+                x-stoplight:
+                  id: vebrdpl6wtsg3
+              advertiser:
+                type: string
+                description: The advertiser of an ad.
+                x-stoplight:
+                  id: 1p2os51tjrw3b
+              startTs:
+                type: string
+                description: The start ad timestamp.
+                x-stoplight:
+                  id: 9txcbptpoq6k9
+              endTs:
+                type: string
+                description: The end ad timestamp.
+                x-stoplight:
+                  id: 0cm8nvreetbf7
+              placementGroupNum:
+                type: string
+                description: The ad placement group number.
+                x-stoplight:
+                  id: wtr69o7a8xojb
+              placementNum:
+                type: string
+                description: The ad placement number.
+                x-stoplight:
+                  id: ofcd33gsi2q5w
+              placementNumInGroup:
+                type: string
+                description: The ad placement number in group.
+                x-stoplight:
+                  id: c0restmmw96lf
+              placementUnit:
+                type: string
+                description: The ad placement unit.
+                x-stoplight:
+                  id: 607jikcwih22t
+            x-stoplight:
+              id: udojxnhu9gx4p
+          x-stoplight:
+            id: 3jtg75eu39s65
+        userAgents:
+          type: array
+          description: 'Download counts by normalized user agent, sorted by downloads descending'
+          items:
+            type: object
+            additionalProperties:
+              type: number
+              x-stoplight:
+                id: lponbxjsq90fw
+            minProperties: 1
+            maxProperties: 1
+            x-stoplight:
+              id: 1m829b0emfxmv
+          x-stoplight:
+            id: eygqb3finn9ru
+      x-stoplight:
+        id: ejew6ssfrykkm
+    x-stoplight:
+      id: x8jlwp3j52pfk
